@@ -31,6 +31,6 @@ jobs:
       - name: Notify slack
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BUILDBOT_TOKEN }}
-        uses: pullreminders/slack-action@v1
+        uses: pullreminders/slack-action@v1.0.9
         with:
           args: '{\"channel\":\"D2WCTEM5F\",\"text\":\"Hello world\"}'
