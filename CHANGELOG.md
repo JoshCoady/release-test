@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/JoshCoady/release-test/compare/v1.5.0...v1.6.0) (2020-06-12)
+
+
+### Features
+
+* try a diff slack sender ([dcd765d](https://github.com/JoshCoady/release-test/commit/dcd765d4469517e31fb005d16cf6286059879a9a))
+
 # [1.5.0](https://github.com/JoshCoady/release-test/compare/v1.4.0...v1.5.0) (2020-06-12)
 
 
