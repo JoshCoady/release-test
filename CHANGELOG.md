@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/JoshCoady/release-test/compare/v1.3.0...v1.4.0) (2020-06-12)
+
+
+### Features
+
+* tweak formating ([d10abe4](https://github.com/JoshCoady/release-test/commit/d10abe4f52c98a3bb594554afcd12bc46c4090b5))
+
 # [1.3.0](https://github.com/JoshCoady/release-test/compare/v1.2.1...v1.3.0) (2020-06-12)
 
 
