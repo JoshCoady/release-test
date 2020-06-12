@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/JoshCoady/release-test/compare/v1.8.0...v1.9.0) (2020-06-12)
+
+
+### Features
+
+* custom formatter ([b69e250](https://github.com/JoshCoady/release-test/commit/b69e250d5136d50695b80509116fb671f1272040))
+
 # [1.8.0](https://github.com/JoshCoady/release-test/compare/v1.7.0...v1.8.0) (2020-06-12)
 
 
