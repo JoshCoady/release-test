@@ -65,3 +65,39 @@ jobs:
               }
             }]
           }'
+
+      - name: Convert
+        id: convert
+        uses: ./.github/actions/md2mrkdwn
+        with:
+          text: |
+            # Heading 1
+
+            ## Heading 2
+
+            [Link](http://example.com)
+
+            * List Item 1
+            * List Item 2
+
+      - name: Verify
+        shell: bash
+        env:
+          ACTUAL: ${{ steps.convert.outputs.text }}
+          EXPECTED: |
+            *Heading 1*
+
+            *Heading 2*
+
+            <>
+
+            - List Item 1
+            - List Item 2
+        run: |
+          if [ "$ACTUAL" == "$EXPECTED" ]; then
+            exit 0
+          else
+            echo "Actual: $ACTUAL"
+            echo "Expected: $EXPECTED"
+            exit 1
+          fi
