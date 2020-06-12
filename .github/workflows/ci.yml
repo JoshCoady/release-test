@@ -31,6 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Tag
+        if: steps.release.outputs.new_release_published == 'true'
         env:
           TAG: v${{ steps.release.outputs.new_release_major_version }}
         run: |
@@ -39,7 +40,8 @@ jobs:
 
       - name: Slackify release notes
         id: slackify_release_notes
-        uses: ./.github/actions/md2mrkdwn
+        if: steps.release.outputs.new_release_published == 'true'
+        uses: LoveToKnow/slackify-markdown-action@v1
         with:
           text: ${{ steps.release.outputs.new_release_notes }}
 
@@ -75,7 +77,7 @@ jobs:
 
       - name: Convert
         id: convert
-        uses: ./.github/actions/md2mrkdwn
+        uses: LoveToKnow/slackify-markdown-action@v1
         with:
           text: |
             # Heading 1
