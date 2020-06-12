@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/JoshCoady/release-test/compare/v1.6.0...v1.7.0) (2020-06-12)
+
+
+### Features
+
+* try adding slack signing secret ([59e75ac](https://github.com/JoshCoady/release-test/commit/59e75ac80826ab686cf8b71c910fc5a7f435f9ad))
+
 # [1.6.0](https://github.com/JoshCoady/release-test/compare/v1.5.0...v1.6.0) (2020-06-12)
 
 
