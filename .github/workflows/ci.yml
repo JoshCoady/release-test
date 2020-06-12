@@ -32,23 +32,29 @@ jobs:
 
       - name: Notify slack
         if: steps.release.outputs.new_release_published == 'true'
-        uses: pullreminders/slack-action@v1.0.9
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BUILDBOT_TOKEN }}
+        uses: aibexhq/slack-rich-notify@v1.0.2
         with:
-          args: '{
-            \"channel\":\"U081Z9XTP\",
-            \"blocks\": [{
-              \"type\": \"section\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"v${{ steps.release.outputs.new_release_version }}\"
-              }
-            }, {
-              \"type\": \"section\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"${{ steps.release.outputs.new_release_notes }}\"
-              }
-            }]
-          }'
+          token: ${{secrets.SLACK_BUILDBOT_TOKEN}} # your slack bot key
+#          secret: ${{secrets.SLACK_SIGNING_SECRET}} # your slack signing secret
+          channel: U081Z9XTP
+          message: ${{ steps.release.outputs.new_release_notes }}
+#        uses: pullreminders/slack-action@v1.0.9
+#        env:
+#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BUILDBOT_TOKEN }}
+#        with:
+#          args: '{
+#            \"channel\":\"U081Z9XTP\",
+#            \"blocks\": [{
+#              \"type\": \"section\",
+#              \"text\": {
+#                \"type\": \"mrkdwn\",
+#                \"text\": \"v${{ steps.release.outputs.new_release_version }}\"
+#              }
+#            }, {
+#              \"type\": \"section\",
+#              \"text\": {
+#                \"type\": \"mrkdwn\",
+#                \"text\": \"${{ steps.release.outputs.new_release_notes }}\"
+#              }
+#            }]
+#          }'
