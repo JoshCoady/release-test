@@ -36,4 +36,10 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BUILDBOT_TOKEN }}
         with:
-          args: '{\"channel\":\"U081Z9XTP\",\"text\":\"v${{ steps.release.outputs.new_release_version }} N:${{ steps.release.outputs.new_release_notes }}\"}'
+          args: '{
+            \"channel\":\"U081Z9XTP\",
+            \"text\":{
+              \"type\": \"mrkdwn\",
+              \"text\": \"v${{ steps.release.outputs.new_release_version }}\n${{ steps.release.outputs.new_release_notes }}\"
+            }
+          }'
