@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/JoshCoady/release-test/compare/v1.9.0...v1.9.1) (2020-06-12)
+
+
+### Bug Fixes
+
+* need to include node_modules ([268c7cd](https://github.com/JoshCoady/release-test/commit/268c7cd42135fce52d05441d6888d4290fafd445))
+
 # [1.9.0](https://github.com/JoshCoady/release-test/compare/v1.8.0...v1.9.0) (2020-06-12)
 
 
