@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/JoshCoady/release-test/compare/v1.7.0...v1.8.0) (2020-06-12)
+
+
+### Features
+
+* add test message ([ec042aa](https://github.com/JoshCoady/release-test/commit/ec042aaa88bfa3ce8f20b853a906b9d35bc6978e))
+
 # [1.7.0](https://github.com/JoshCoady/release-test/compare/v1.6.0...v1.7.0) (2020-06-12)
 
 
