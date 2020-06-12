@@ -1,3 +1,15 @@
+# [1.12.0](https://github.com/JoshCoady/release-test/compare/v1.11.0...v1.12.0) (2020-06-12)
+
+
+### Bug Fixes
+
+* build steps processing release run even if no release ([d58d447](https://github.com/JoshCoady/release-test/commit/d58d447047436a5ee98f468547452c0ad667ca80))
+
+
+### Features
+
+* switch to using published slackify action ([d3816de](https://github.com/JoshCoady/release-test/commit/d3816de51fcb519587e5e3d0ab11fbc4843f22d6))
+
 # [1.11.0](https://github.com/JoshCoady/release-test/compare/v1.10.0...v1.11.0) (2020-06-12)
 
 
