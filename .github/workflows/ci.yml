@@ -39,7 +39,7 @@ jobs:
 
       - name: Slackify release notes
         id: slackify_release_notes
-        uses: ./.github/actions/md2mrkdwn
+        uses: LoveToKnow/slackify-markdown-action@v1
         with:
           text: ${{ steps.release.outputs.new_release_notes }}
 
