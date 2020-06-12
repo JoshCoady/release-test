@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/JoshCoady/release-test/compare/v1.2.0...v1.2.1) (2020-06-12)
+
+
+### Bug Fixes
+
+* try my member id ([4b53773](https://github.com/JoshCoady/release-test/commit/4b537732ffe6a4fb8a9ab30b2150237d99b662ed))
+
 # [1.2.0](https://github.com/JoshCoady/release-test/compare/v1.1.0...v1.2.0) (2020-06-12)
 
 
