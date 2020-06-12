@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/JoshCoady/release-test/compare/v1.4.0...v1.5.0) (2020-06-12)
+
+
+### Features
+
+* try using blocks ([0acef1c](https://github.com/JoshCoady/release-test/commit/0acef1c7f742de973201a26bd6333abda93193c4))
+
 # [1.4.0](https://github.com/JoshCoady/release-test/compare/v1.3.0...v1.4.0) (2020-06-12)
 
 
