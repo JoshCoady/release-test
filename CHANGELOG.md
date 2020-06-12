@@ -1,3 +1,10 @@
+## [1.12.1](https://github.com/JoshCoady/release-test/compare/v1.12.0...v1.12.1) (2020-06-12)
+
+
+### Bug Fixes
+
+* add `--force` flag to overwrite existing tag ([5d61b0c](https://github.com/JoshCoady/release-test/commit/5d61b0ca2c73541538091204f8f96fae1edd6f0f))
+
 # [1.12.0](https://github.com/JoshCoady/release-test/compare/v1.11.0...v1.12.0) (2020-06-12)
 
 
