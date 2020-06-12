@@ -27,3 +27,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+
+      - name: Notify slack
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BUILDBOT_TOKEN }}
+        uses: pullreminders/slack-action@v1
+        with:
+          args: '{\"channel\":\"D2WCTEM5F\",\"text\":\"Hello world\"}'
