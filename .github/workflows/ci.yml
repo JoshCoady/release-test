@@ -35,7 +35,7 @@ jobs:
         uses: aibexhq/slack-rich-notify@v1.0.2
         with:
           token: ${{secrets.SLACK_BUILDBOT_TOKEN}} # your slack bot key
-#          secret: ${{secrets.SLACK_SIGNING_SECRET}} # your slack signing secret
+          secret: ${{secrets.SS}} # your slack signing secret
           channel: U081Z9XTP
           message: ${{ steps.release.outputs.new_release_notes }}
 #        uses: pullreminders/slack-action@v1.0.9
