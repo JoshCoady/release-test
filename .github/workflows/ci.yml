@@ -38,8 +38,17 @@ jobs:
         with:
           args: '{
             \"channel\":\"U081Z9XTP\",
-            \"text\":{
-              \"type\": \"mrkdwn\",
-              \"text\": \"v${{ steps.release.outputs.new_release_version }}\n${{ steps.release.outputs.new_release_notes }}\"
-            }
+            \"blocks\": [{
+              \"type\": \"section\",
+              \"text\": {
+                \"type\": \"mrkdwn\",
+                \"text\": \"v${{ steps.release.outputs.new_release_version }}\"
+              }
+            }, {
+              \"type\": \"section\",
+              \"text\": {
+                \"type\": \"mrkdwn\",
+                \"text\": \"${{ steps.release.outputs.new_release_notes }}\"
+              }
+            }]
           }'
