@@ -30,6 +30,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Tag
+        env:
+          TAG: v${{ steps.release.outputs.new_release_major_version }}
+        run: |
+          git tag "$TAG"
+          git push origin "$TAG"
+
       - name: Slackify release notes
         id: slackify_release_notes
         uses: ./.github/actions/md2mrkdwn
@@ -89,10 +96,10 @@ jobs:
 
             *Heading 2*
 
-            <>
+            <http://example.com|Link>
 
-            - List Item 1
-            - List Item 2
+            •   List Item 1
+            •   List Item 2
         run: |
           if [ "$ACTUAL" == "$EXPECTED" ]; then
             exit 0
