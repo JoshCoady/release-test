@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/JoshCoady/release-test/compare/v1.10.0...v1.11.0) (2020-06-12)
+
+
+### Features
+
+* auto-tag major ([1231571](https://github.com/JoshCoady/release-test/commit/123157136818aa86a4203b09c4aa87e3b199bc91))
+
 # [1.10.0](https://github.com/JoshCoady/release-test/compare/v1.9.1...v1.10.0) (2020-06-12)
 
 
