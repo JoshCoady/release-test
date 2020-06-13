@@ -1,3 +1,10 @@
+# [1.0.0-beta.2](https://github.com/JoshCoady/release-test/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2020-06-13)
+
+
+### Bug Fixes
+
+* only push on prod release ([b6087c7](https://github.com/JoshCoady/release-test/commit/b6087c77ba84bf11ccb55abf45df5a90491b95b6))
+
 # 1.0.0-beta.1 (2020-06-13)
 
 
