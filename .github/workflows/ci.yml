@@ -30,7 +30,6 @@ jobs:
             @semantic-release/git
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEBUG: "semantic-release:*"
 
       - name: Tag
         if: steps.release.outputs.new_release_published == 'true'
@@ -39,6 +38,7 @@ jobs:
         run: |
           git tag --force "$TAG"
           git push --force origin "$TAG"
+          git push origin prod:master
 
       - name: Slackify release notes
         id: slackify_release_notes
@@ -76,39 +76,3 @@ jobs:
               }
             }]
           }'
-
-      - name: Convert
-        id: convert
-        uses: LoveToKnow/slackify-markdown-action@v1
-        with:
-          text: |
-            # Heading 1
-
-            ## Heading 2
-
-            [Link](http://example.com)
-
-            * List Item 1
-            * List Item 2
-
-      - name: Verify
-        shell: bash
-        env:
-          ACTUAL: ${{ steps.convert.outputs.text }}
-          EXPECTED: |
-            *Heading 1*
-
-            *Heading 2*
-
-            <http://example.com|Link>
-
-            •   List Item 1
-            •   List Item 2
-        run: |
-          if [ "$ACTUAL" == "$EXPECTED" ]; then
-            exit 0
-          else
-            echo "Actual: $ACTUAL"
-            echo "Expected: $EXPECTED"
-            exit 1
-          fi

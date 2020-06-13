@@ -2,12 +2,13 @@
   "branches": [
     {
       "name": "prod",
-      "channel": false
+      "channel": "prod",
+      "prerelease": false
     },
     {
       "name": "master",
-      "channel": "test",
-      "prerelease": "test"
+      "channel": false,
+      "prerelease": "beta"
     }
   ],
   "plugins": [
