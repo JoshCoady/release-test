@@ -57,11 +57,12 @@ jobs:
         with:
           args: '{
             \"channel\":\"U081Z9XTP\",
+            \"text\": \"Released v${{ steps.release.outputs.new_release_version }}\",
             \"blocks\": [{
               \"type\": \"section\",
               \"text\": {
                 \"type\": \"mrkdwn\",
-                \"text\": \"v${{ steps.release.outputs.new_release_version }}\"
+                \"text\": \"Released v${{ steps.release.outputs.new_release_version }}\"
               }
             }, {
               \"type\": \"section\",
