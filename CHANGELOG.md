@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/JoshCoady/release-test/compare/v1.12.1...v1.13.0) (2020-06-13)
+
+
+### Features
+
+* enable building on prod branch ([b7bb9b9](https://github.com/JoshCoady/release-test/commit/b7bb9b9c114f1aaa8dca16bbd685fb70d9b7a35d))
+
 ## [1.12.1](https://github.com/JoshCoady/release-test/compare/v1.12.0...v1.12.1) (2020-06-12)
 
 
