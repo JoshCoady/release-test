@@ -1,3 +1,10 @@
+# [1.0.0-beta.3](https://github.com/JoshCoady/release-test/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2020-06-13)
+
+
+### Features
+
+* add default/simple message to slack ([193d31b](https://github.com/JoshCoady/release-test/commit/193d31b9f74577e48d9523d61e06eef19cc40352))
+
 # [1.0.0-beta.2](https://github.com/JoshCoady/release-test/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2020-06-13)
 
 
