@@ -6,7 +6,8 @@
     },
     {
       "name": "master",
-      "channel": "test"
+      "channel": "test",
+      "prerelease": "test"
     }
   ],
   "plugins": [
