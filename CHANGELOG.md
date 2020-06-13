@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/JoshCoady/release-test/compare/v1.0.0...v1.0.1) (2020-06-13)
+
+
+### Bug Fixes
+
+* merge before push ([76e1a3f](https://github.com/JoshCoady/release-test/commit/76e1a3f3778eb9450f3b817238bbd0c2d52069b0))
+
 # 1.0.0 (2020-06-13)
 
 
