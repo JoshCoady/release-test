@@ -30,6 +30,7 @@ jobs:
             @semantic-release/git
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEBUG: "semantic-release:*"
 
       - name: Tag
         if: steps.release.outputs.new_release_published == 'true'
