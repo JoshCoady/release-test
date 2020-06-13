@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/JoshCoady/release-test/compare/v1.13.0...v1.14.0) (2020-06-13)
+
+
+### Features
+
+* enable release debug ([fce16e3](https://github.com/JoshCoady/release-test/commit/fce16e3b37c25c1a5305bf05a36783cd513c6a98))
+
 # [1.13.0](https://github.com/JoshCoady/release-test/compare/v1.12.1...v1.13.0) (2020-06-13)
 
 
