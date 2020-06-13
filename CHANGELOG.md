@@ -1,3 +1,10 @@
+# [1.16.0-test.1](https://github.com/JoshCoady/release-test/compare/v1.15.0...v1.16.0-test.1) (2020-06-13)
+
+
+### Features
+
+* try as a prerelease ([6809d87](https://github.com/JoshCoady/release-test/commit/6809d87e718af77bc73dd21b930ec026c18cbe2a))
+
 # [1.15.0](https://github.com/JoshCoady/release-test/compare/v1.14.0...v1.15.0) (2020-06-13)
 
 
