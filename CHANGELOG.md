@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/JoshCoady/release-test/compare/v1.14.0...v1.15.0) (2020-06-13)
+
+
+### Features
+
+* tweak release config ([89fbe5b](https://github.com/JoshCoady/release-test/commit/89fbe5b719e4b91a609f95f43444a5bae121865b))
+
 # [1.14.0](https://github.com/JoshCoady/release-test/compare/v1.13.0...v1.14.0) (2020-06-13)
 
 
