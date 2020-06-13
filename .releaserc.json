@@ -1,7 +1,13 @@
 {
   "branches": [
-    "prod",
-    "master"
+    {
+      "name": "prod",
+      "channel": false
+    },
+    {
+      "name": "master",
+      "channel": "test"
+    }
   ],
   "plugins": [
     "@semantic-release/commit-analyzer",
