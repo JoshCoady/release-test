@@ -31,14 +31,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Tag
-        if: steps.release.outputs.new_release_published == 'true'
-        env:
-          TAG: v${{ steps.release.outputs.new_release_major_version }}
-        run: |
-          git tag --force "$TAG"
-          git push --force origin "$TAG"
-          git push origin prod:master
+      - name: Merge
+        if: steps.release.outputs.new_release_published == 'true' && github.ref == 'refs/heads/prod'
+        run: git push origin prod:master
 
       - name: Slackify release notes
         id: slackify_release_notes
