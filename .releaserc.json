@@ -7,7 +7,7 @@
     {
       "name": "master",
       "channel": "test",
-      "prerelease": false
+      "prerelease": "test"
     }
   ],
   "plugins": [
