@@ -68,6 +68,8 @@ jobs:
                 \"text\": \"Released v${{ steps.release.outputs.new_release_version }}\"
               }
             }, {
+              \"type\": \"divider\"
+            }, {
               \"type\": \"section\",
               \"text\": {
                 \"type\": \"mrkdwn\",
