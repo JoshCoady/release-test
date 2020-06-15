@@ -11,6 +11,31 @@ defaults:
     shell: bash
 
 jobs:
+  test1_out:
+    runs-on: ubuntu-latest
+    outputs:
+      test1_var: ${{ env.TEST1_VAR }}
+    steps:
+      - run: echo "::set-env name=TEST1_VAR::Test1_Val"
+  test1_in:
+    needs: test1_out
+    runs-on: ubuntu-latest
+    if: needs.test1_out.outputs.test1_var
+    steps:
+      - run: echo '${{ needs.test1_out.outputs.test1_var }}'
+  test2_out:
+    runs-on: ubuntu-latest
+    outputs:
+      test2_var: ${{ env.TEST2_VAR }}
+    steps:
+      - run: echo "not setting var"
+  test2_in:
+    needs: test2_out
+    runs-on: ubuntu-latest
+    if: needs.test2_out.outputs.test2_var
+    steps:
+      - run: echo '${{ needs.test2_out.outputs.test2_var }}'
+
   build:
     name: CI
     runs-on: ubuntu-latest
