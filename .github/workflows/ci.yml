@@ -17,6 +17,23 @@ jobs:
       test1_var: ${{ env.TEST1_VAR }}
     steps:
       - run: echo "::set-env name=TEST1_VAR::Test1_Val"
+      - name: TF
+        if: true
+        if: false
+        run: echo "TF"
+      - name: FT
+        if: false
+        if: true
+        run: echo "FT"
+      - name: TT
+        if: true
+        if: true
+        run: echo "TT"
+      - name: FF
+        if: false
+        if: false
+        run: echo "FF"
+
   test1_in:
     needs: test1_out
     runs-on: ubuntu-latest
