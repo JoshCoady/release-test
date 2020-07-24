@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: gpr
+        name: [gpr]
         run: [1, 2]
       max-parallel: 1
     steps:
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: gpr_tag
+        name: [gpr_tag]
         run: [1, 2]
       max-parallel: 1
     steps:
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: gpr_bk
+        name: [gpr_bk]
         run: [1, 2]
       max-parallel: 1
     env:
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: gpr_bk_tag
+        name: [gpr_bk_tag]
         run: [1, 2]
       max-parallel: 1
     env:
