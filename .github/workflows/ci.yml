@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: ${{ env.GPR_LOGIN }}
       - run: docker pull ${{ env.GPR_TAG }} || true
-      - run: docker build -t ${{ env.GPR_TAG }} .
+      - run: docker build -t ${{ env.GPR_TAG }} --cache-from=${{ env.GPR_TAG }} .
       - run: docker push ${{ env.GPR_TAG }}
   gpr_tag:
     name: "${{ matrix.name }}, run ${{ matrix.run }}"
@@ -46,7 +46,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: ${{ env.GPR_LOGIN }}
       - run: docker pull ${{ env.GPR_TAG }} || true
-      - run: docker build -t ${{ matrix.name }} .
+      - run: docker build -t ${{ matrix.name }} --cache-from=${{ env.GPR_TAG }} .
       - run: docker tag ${{ matrix.name }} ${{ env.GPR_TAG }} && docker push ${{ env.GPR_TAG }}
   gpr_bk:
     name: "${{ matrix.name }}, run ${{ matrix.run }}"
