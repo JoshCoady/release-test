@@ -13,11 +13,11 @@ defaults:
 env:
   GPR_LOGIN: "echo \"${{ secrets.GITHUB_TOKEN }}\" | docker login -u \"${{ github.actor }}\" --password-stdin docker.pkg.github.com"
   GPR_REPO: "docker.pkg.github.com/${{ github.repository }}"
-  GPR_TAG: "${GPR_REPO,,}/cache:${NAME}"
+  GPR_TAG: "${GPR_REPO,,}/cache:${{ env.NAME }}"
 
 jobs:
   gpr:
-    name: "${NAME}, run ${{ matrix.run }}"
+    name: "${{ env.NAME }}, run ${{ matrix.run }}"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,11 +27,11 @@ jobs:
       NAME: gpr
     steps:
       - run: ${{ env.GPR_LOGIN }}
-      - run: docker pull ${GPR_TAG} || true
-      - run: docker build -t ${GPR_TAG} .
-      - run: docker push ${GPR_TAG}
+      - run: docker pull ${{ env.GPR_TAG }} || true
+      - run: docker build -t ${{ env.GPR_TAG }} .
+      - run: docker push ${{ env.GPR_TAG }}
   gpr_tag:
-    name: "${NAME}, run ${{ matrix.run }}"
+    name: "${{ env.NAME }}, run ${{ matrix.run }}"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -41,11 +41,11 @@ jobs:
       NAME: gpr_tag
     steps:
       - run: ${{ env.GPR_LOGIN }}
-      - run: docker pull ${GPR_TAG} || true
-      - run: docker build -t ${NAME} .
-      - run: docker tag ${NAME} ${GPR_TAG} && docker push ${GPR_TAG}
+      - run: docker pull ${{ env.GPR_TAG }} || true
+      - run: docker build -t ${{ env.NAME }} .
+      - run: docker tag ${{ env.NAME }} ${{ env.GPR_TAG }} && docker push ${{ env.GPR_TAG }}
   gpr_bk:
-    name: "${NAME}, run ${{ matrix.run }}"
+    name: "${{ env.NAME }}, run ${{ matrix.run }}"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -56,10 +56,10 @@ jobs:
       DOCKER_BUILDKIT: '1'
     steps:
       - run: ${{ env.GPR_LOGIN }}
-      - run: docker build -t ${GPR_TAG} --cache-from=${GPR_TAG} --build-arg BUILDKIT_INLINE_CACHE=1 .
-      - run: docker push ${GPR_TAG}
+      - run: docker build -t ${{ env.GPR_TAG }} --cache-from=${{ env.GPR_TAG }} --build-arg BUILDKIT_INLINE_CACHE=1 .
+      - run: docker push ${{ env.GPR_TAG }}
   gpr_bk_tag:
-    name: "${NAME}, run ${{ matrix.run }}"
+    name: "${{ env.NAME }}, run ${{ matrix.run }}"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -70,5 +70,5 @@ jobs:
       DOCKER_BUILDKIT: '1'
     steps:
       - run: ${{ env.GPR_LOGIN }}
-      - run: docker build -t ${NAME} --cache-from=${GPR_TAG} --build-arg BUILDKIT_INLINE_CACHE=1 .
-      - run: docker tag ${NAME} ${GPR_TAG} && docker push ${GPR_TAG}
+      - run: docker build -t ${{ env.NAME }} --cache-from=${{ env.GPR_TAG }} --build-arg BUILDKIT_INLINE_CACHE=1 .
+      - run: docker tag ${{ env.NAME }} ${{ env.GPR_TAG }} && docker push ${{ env.GPR_TAG }}
