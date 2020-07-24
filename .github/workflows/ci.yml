@@ -27,6 +27,7 @@ jobs:
     env:
       NAME: ${{ matrix.name }}
     steps:
+      - uses: actions/checkout@v2
       - run: ${{ env.GPR_LOGIN }}
       - run: docker pull ${{ env.GPR_TAG }} || true
       - run: docker build -t ${{ env.GPR_TAG }} .
@@ -42,6 +43,7 @@ jobs:
     env:
       NAME: ${{ matrix.name }}
     steps:
+      - uses: actions/checkout@v2
       - run: ${{ env.GPR_LOGIN }}
       - run: docker pull ${{ env.GPR_TAG }} || true
       - run: docker build -t ${{ matrix.name }} .
@@ -58,6 +60,7 @@ jobs:
       NAME: ${{ matrix.name }}
       DOCKER_BUILDKIT: '1'
     steps:
+      - uses: actions/checkout@v2
       - run: ${{ env.GPR_LOGIN }}
       - run: docker build -t ${{ env.GPR_TAG }} --cache-from=${{ env.GPR_TAG }} --build-arg BUILDKIT_INLINE_CACHE=1 .
       - run: docker push ${{ env.GPR_TAG }}
@@ -73,6 +76,7 @@ jobs:
       NAME: ${{ matrix.name }}
       DOCKER_BUILDKIT: '1'
     steps:
+      - uses: actions/checkout@v2
       - run: ${{ env.GPR_LOGIN }}
       - run: docker build -t ${{ matrix.name }} --cache-from=${{ env.GPR_TAG }} --build-arg BUILDKIT_INLINE_CACHE=1 .
       - run: docker tag ${{ matrix.name }} ${{ env.GPR_TAG }} && docker push ${{ env.GPR_TAG }}
