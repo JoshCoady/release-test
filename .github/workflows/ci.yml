@@ -10,112 +10,105 @@ defaults:
   run:
     shell: bash
 
+env:
+  GPR_LOGIN: "echo \"${{ secrets.GITHUB_TOKEN }}\" | docker login -u \"${{ github.actor }}\" --password-stdin docker.pkg.github.com"
+  GPR_REPO: "docker.pkg.github.com/${{ github.repository }}"
+  GPR_TAG: "${GPR_REPO,,}/cache:${NAME}"
+
 jobs:
-  test1_out:
+  test1:
+    name: "${{ matrix.name }}, run ${{ matrix.run }}"
     runs-on: ubuntu-latest
-    outputs:
-      test1_var: ${{ env.TEST1_VAR }}
+    strategy:
+      matrix:
+        name: [gpr_cf]
+        run: [1, 2]
+      max-parallel: 1
+    env:
+      NAME: ${{ matrix.name }}
     steps:
-      - run: echo "::set-env name=TEST1_VAR::Test1_Val"
-      - name: TF
-        if: true
-        if: false
-        run: echo "TF"
-      - name: FT
-        if: false
-        if: true
-        run: echo "FT"
-      - name: TT
-        if: true
-        if: true
-        run: echo "TT"
-      - name: FF
-        if: false
-        if: false
-        run: echo "FF"
-
-  test1_in:
-    needs: test1_out
+      - uses: actions/checkout@v2
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker pull ${{ env.GPR_TAG }} || true
+      - run: docker build -t ${{ env.GPR_TAG }} --cache-from=${{ env.GPR_TAG }} .
+      - run: docker push ${{ env.GPR_TAG }}
+  test2:
+    name: "${{ matrix.name }}, run ${{ matrix.run }}"
     runs-on: ubuntu-latest
-    if: needs.test1_out.outputs.test1_var
+    strategy:
+      matrix:
+        name: [gpr_tag_cf]
+        run: [1, 2]
+      max-parallel: 1
+    env:
+      NAME: ${{ matrix.name }}
     steps:
-      - run: echo '${{ needs.test1_out.outputs.test1_var }}'
-  test2_out:
+      - uses: actions/checkout@v2
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker pull ${{ env.GPR_TAG }} || true
+      - run: docker build -t ${{ matrix.name }} --cache-from=${{ env.GPR_TAG }} .
+      - run: docker tag ${{ matrix.name }} ${{ env.GPR_TAG }} && docker push ${{ env.GPR_TAG }}
+  gpr:
+    name: "${{ matrix.name }}, run ${{ matrix.run }}"
     runs-on: ubuntu-latest
-    outputs:
-      test2_var: ${{ env.TEST2_VAR }}
+    strategy:
+      matrix:
+        name: [gpr]
+        run: [1, 2]
+      max-parallel: 1
+    env:
+      NAME: ${{ matrix.name }}
     steps:
-      - run: echo "not setting var"
-  test2_in:
-    needs: test2_out
+      - uses: actions/checkout@v2
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker pull ${{ env.GPR_TAG }} || true
+      - run: docker build -t ${{ env.GPR_TAG }} .
+      - run: docker push ${{ env.GPR_TAG }}
+  gpr_tag:
+    name: "${{ matrix.name }}, run ${{ matrix.run }}"
     runs-on: ubuntu-latest
-    if: needs.test2_out.outputs.test2_var
+    strategy:
+      matrix:
+        name: [gpr_tag]
+        run: [1, 2]
+      max-parallel: 1
+    env:
+      NAME: ${{ matrix.name }}
     steps:
-      - run: echo '${{ needs.test2_out.outputs.test2_var }}'
-
-  build:
-    name: CI
+      - uses: actions/checkout@v2
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker pull ${{ env.GPR_TAG }} || true
+      - run: docker build -t ${{ matrix.name }} .
+      - run: docker tag ${{ matrix.name }} ${{ env.GPR_TAG }} && docker push ${{ env.GPR_TAG }}
+  gpr_bk:
+    name: "${{ matrix.name }}, run ${{ matrix.run }}"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: [gpr_bk]
+        run: [1, 2]
+      max-parallel: 1
+    env:
+      NAME: ${{ matrix.name }}
+      DOCKER_BUILDKIT: '1'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Test
-        run: ./test.sh
-
-      - name: Release
-        id: release
-        uses: cycjimmy/semantic-release-action@v2
-#        with:
-#          extra_plugins: |
-#            @semantic-release/changelog
-#            @semantic-release/git
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-#      - name: Merge
-#        if: steps.release.outputs.new_release_published == 'true' && github.ref == 'refs/heads/prod'
-#        run: |
-#          git checkout master
-#          git merge prod
-#          git push origin master
-
-      - name: Slackify release notes
-        id: slackify_release_notes
-        if: steps.release.outputs.new_release_published == 'true'
-        uses: LoveToKnow/slackify-markdown-action@v1
-        with:
-          text: ${{ steps.release.outputs.new_release_notes }}
-
-      - name: Notify slack
-        if: steps.release.outputs.new_release_published == 'true'
-#        uses: aibexhq/slack-rich-notify@v1.0.2
-#        with:
-#          token: ${{secrets.SLACK_BUILDBOT_TOKEN}} # your slack bot key
-#          secret: ${{secrets.SS}} # your slack signing secret
-#          channel: U081Z9XTP
-#          message: |
-#            ${{ steps.slackify_release_notes.outputs.text }}
-        uses: pullreminders/slack-action@v1.0.9
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BUILDBOT_TOKEN }}
-        with:
-          args: '{
-            \"channel\":\"U081Z9XTP\",
-            \"text\": \"Released v${{ steps.release.outputs.new_release_version }}\",
-            \"blocks\": [{
-              \"type\": \"section\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"Released v${{ steps.release.outputs.new_release_version }}\"
-              }
-            }, {
-              \"type\": \"divider\"
-            }, {
-              \"type\": \"section\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"${{ steps.slackify_release_notes.outputs.text }}\"
-              }
-            }]
-          }'
+      - uses: actions/checkout@v2
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker build -t ${{ env.GPR_TAG }} --cache-from=${{ env.GPR_TAG }} --build-arg BUILDKIT_INLINE_CACHE=1 .
+      - run: docker push ${{ env.GPR_TAG }}
+  gpr_bk_tag:
+    name: "${{ matrix.name }}, run ${{ matrix.run }}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: [gpr_bk_tag]
+        run: [1, 2]
+      max-parallel: 1
+    env:
+      NAME: ${{ matrix.name }}
+      DOCKER_BUILDKIT: '1'
+    steps:
+      - uses: actions/checkout@v2
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker build -t ${{ matrix.name }} --cache-from=${{ env.GPR_TAG }} --build-arg BUILDKIT_INLINE_CACHE=1 .
+      - run: docker tag ${{ matrix.name }} ${{ env.GPR_TAG }} && docker push ${{ env.GPR_TAG }}
