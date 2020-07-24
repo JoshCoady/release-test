@@ -7,115 +7,50 @@ on:
       - prod
 
 defaults:
+  name: "${NAME}, run ${{ matrix.run }}"
   run:
     shell: bash
+  runs-on: ubuntu-latest
+  strategy:
+    matrix:
+      run: [1, 2]
+    max-parallel: 1
+
+env:
+  GPR_LOGIN: "echo \"${{ secrets.GITHUB_TOKEN }}\" | docker login -u \"${{ github.actor }}\" --password-stdin docker.pkg.github.com"
+  GPR_REPO: "docker.pkg.github.com/${{ github.repository }}"
+  GPR_TAG: "${GPR_REPO,,}/cache:${NAME}"
 
 jobs:
-  test1_out:
-    runs-on: ubuntu-latest
-    outputs:
-      test1_var: ${{ env.TEST1_VAR }}
+  gpr:
+    env:
+      NAME: gpr
     steps:
-      - run: echo "::set-env name=TEST1_VAR::Test1_Val"
-      - name: TF
-        if: true
-        if: false
-        run: echo "TF"
-      - name: FT
-        if: false
-        if: true
-        run: echo "FT"
-      - name: TT
-        if: true
-        if: true
-        run: echo "TT"
-      - name: FF
-        if: false
-        if: false
-        run: echo "FF"
-
-  test1_in:
-    needs: test1_out
-    runs-on: ubuntu-latest
-    if: needs.test1_out.outputs.test1_var
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker pull ${GPR_TAG} || true
+      - run: docker build -t ${GPR_TAG} .
+      - run: docker push ${GPR_TAG}
+  gpr_tag:
+    env:
+      NAME: gpr_tag
     steps:
-      - run: echo '${{ needs.test1_out.outputs.test1_var }}'
-  test2_out:
-    runs-on: ubuntu-latest
-    outputs:
-      test2_var: ${{ env.TEST2_VAR }}
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker pull ${GPR_TAG} || true
+      - run: docker build -t ${NAME} .
+      - run: docker tag ${NAME} ${GPR_TAG} && docker push ${GPR_TAG}
+  gpr_bk:
+    env:
+      NAME: gpr_bk
+      DOCKER_BUILDKIT: '1'
     steps:
-      - run: echo "not setting var"
-  test2_in:
-    needs: test2_out
-    runs-on: ubuntu-latest
-    if: needs.test2_out.outputs.test2_var
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker build -t ${GPR_TAG} --cache-from=${GPR_TAG} --build-arg BUILDKIT_INLINE_CACHE=1 .
+      - run: docker push ${GPR_TAG}
+  gpr_bk_tag:
+    env:
+      NAME: gpr_bk_tag
+      DOCKER_BUILDKIT: '1'
     steps:
-      - run: echo '${{ needs.test2_out.outputs.test2_var }}'
-
-  build:
-    name: CI
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Test
-        run: ./test.sh
-
-      - name: Release
-        id: release
-        uses: cycjimmy/semantic-release-action@v2
-#        with:
-#          extra_plugins: |
-#            @semantic-release/changelog
-#            @semantic-release/git
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-#      - name: Merge
-#        if: steps.release.outputs.new_release_published == 'true' && github.ref == 'refs/heads/prod'
-#        run: |
-#          git checkout master
-#          git merge prod
-#          git push origin master
-
-      - name: Slackify release notes
-        id: slackify_release_notes
-        if: steps.release.outputs.new_release_published == 'true'
-        uses: LoveToKnow/slackify-markdown-action@v1
-        with:
-          text: ${{ steps.release.outputs.new_release_notes }}
-
-      - name: Notify slack
-        if: steps.release.outputs.new_release_published == 'true'
-#        uses: aibexhq/slack-rich-notify@v1.0.2
-#        with:
-#          token: ${{secrets.SLACK_BUILDBOT_TOKEN}} # your slack bot key
-#          secret: ${{secrets.SS}} # your slack signing secret
-#          channel: U081Z9XTP
-#          message: |
-#            ${{ steps.slackify_release_notes.outputs.text }}
-        uses: pullreminders/slack-action@v1.0.9
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BUILDBOT_TOKEN }}
-        with:
-          args: '{
-            \"channel\":\"U081Z9XTP\",
-            \"text\": \"Released v${{ steps.release.outputs.new_release_version }}\",
-            \"blocks\": [{
-              \"type\": \"section\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"Released v${{ steps.release.outputs.new_release_version }}\"
-              }
-            }, {
-              \"type\": \"divider\"
-            }, {
-              \"type\": \"section\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"${{ steps.slackify_release_notes.outputs.text }}\"
-              }
-            }]
-          }'
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker build -t ${NAME} --cache-from=${GPR_TAG} --build-arg BUILDKIT_INLINE_CACHE=1 .
+      - run: docker tag ${NAME} ${GPR_TAG} && docker push ${GPR_TAG}
