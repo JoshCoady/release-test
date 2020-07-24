@@ -48,3 +48,67 @@ jobs:
       - run: docker pull ${{ env.GPR_TAG }} || true
       - run: docker build -t ${{ matrix.name }} --cache-from=${{ env.GPR_TAG }} .
       - run: docker tag ${{ matrix.name }} ${{ env.GPR_TAG }} && docker push ${{ env.GPR_TAG }}
+  gpr:
+    name: "${{ matrix.name }}, run ${{ matrix.run }}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: [gpr]
+        run: [1, 2]
+      max-parallel: 1
+    env:
+      NAME: ${{ matrix.name }}
+    steps:
+      - uses: actions/checkout@v2
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker pull ${{ env.GPR_TAG }} || true
+      - run: docker build -t ${{ env.GPR_TAG }} .
+      - run: docker push ${{ env.GPR_TAG }}
+  gpr_tag:
+    name: "${{ matrix.name }}, run ${{ matrix.run }}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: [gpr_tag]
+        run: [1, 2]
+      max-parallel: 1
+    env:
+      NAME: ${{ matrix.name }}
+    steps:
+      - uses: actions/checkout@v2
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker pull ${{ env.GPR_TAG }} || true
+      - run: docker build -t ${{ matrix.name }} .
+      - run: docker tag ${{ matrix.name }} ${{ env.GPR_TAG }} && docker push ${{ env.GPR_TAG }}
+  gpr_bk:
+    name: "${{ matrix.name }}, run ${{ matrix.run }}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: [gpr_bk]
+        run: [1, 2]
+      max-parallel: 1
+    env:
+      NAME: ${{ matrix.name }}
+      DOCKER_BUILDKIT: '1'
+    steps:
+      - uses: actions/checkout@v2
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker build -t ${{ env.GPR_TAG }} --cache-from=${{ env.GPR_TAG }} --build-arg BUILDKIT_INLINE_CACHE=1 .
+      - run: docker push ${{ env.GPR_TAG }}
+  gpr_bk_tag:
+    name: "${{ matrix.name }}, run ${{ matrix.run }}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: [gpr_bk_tag]
+        run: [1, 2]
+      max-parallel: 1
+    env:
+      NAME: ${{ matrix.name }}
+      DOCKER_BUILDKIT: '1'
+    steps:
+      - uses: actions/checkout@v2
+      - run: ${{ env.GPR_LOGIN }}
+      - run: docker build -t ${{ matrix.name }} --cache-from=${{ env.GPR_TAG }} --build-arg BUILDKIT_INLINE_CACHE=1 .
+      - run: docker tag ${{ matrix.name }} ${{ env.GPR_TAG }} && docker push ${{ env.GPR_TAG }}
