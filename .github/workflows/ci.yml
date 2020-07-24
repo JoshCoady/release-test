@@ -16,12 +16,12 @@ env:
   GPR_TAG: "${GPR_REPO,,}/cache:${NAME}"
 
 jobs:
-  gpr:
+  test1:
     name: "${{ matrix.name }}, run ${{ matrix.run }}"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: [gpr]
+        name: [gpr_cf]
         run: [1, 2]
       max-parallel: 1
     env:
@@ -32,12 +32,12 @@ jobs:
       - run: docker pull ${{ env.GPR_TAG }} || true
       - run: docker build -t ${{ env.GPR_TAG }} --cache-from=${{ env.GPR_TAG }} .
       - run: docker push ${{ env.GPR_TAG }}
-  gpr_tag:
+  test2:
     name: "${{ matrix.name }}, run ${{ matrix.run }}"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: [gpr_tag]
+        name: [gpr_tag_cf]
         run: [1, 2]
       max-parallel: 1
     env:
@@ -47,36 +47,4 @@ jobs:
       - run: ${{ env.GPR_LOGIN }}
       - run: docker pull ${{ env.GPR_TAG }} || true
       - run: docker build -t ${{ matrix.name }} --cache-from=${{ env.GPR_TAG }} .
-      - run: docker tag ${{ matrix.name }} ${{ env.GPR_TAG }} && docker push ${{ env.GPR_TAG }}
-  gpr_bk:
-    name: "${{ matrix.name }}, run ${{ matrix.run }}"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        name: [gpr_bk]
-        run: [1, 2]
-      max-parallel: 1
-    env:
-      NAME: ${{ matrix.name }}
-      DOCKER_BUILDKIT: '1'
-    steps:
-      - uses: actions/checkout@v2
-      - run: ${{ env.GPR_LOGIN }}
-      - run: docker build -t ${{ env.GPR_TAG }} --cache-from=${{ env.GPR_TAG }} --build-arg BUILDKIT_INLINE_CACHE=1 .
-      - run: docker push ${{ env.GPR_TAG }}
-  gpr_bk_tag:
-    name: "${{ matrix.name }}, run ${{ matrix.run }}"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        name: [gpr_bk_tag]
-        run: [1, 2]
-      max-parallel: 1
-    env:
-      NAME: ${{ matrix.name }}
-      DOCKER_BUILDKIT: '1'
-    steps:
-      - uses: actions/checkout@v2
-      - run: ${{ env.GPR_LOGIN }}
-      - run: docker build -t ${{ matrix.name }} --cache-from=${{ env.GPR_TAG }} --build-arg BUILDKIT_INLINE_CACHE=1 .
       - run: docker tag ${{ matrix.name }} ${{ env.GPR_TAG }} && docker push ${{ env.GPR_TAG }}
