@@ -24,6 +24,8 @@ jobs:
         name: [gpr]
         run: [1, 2]
       max-parallel: 1
+    env:
+      NAME: ${{ matrix.name }}
     steps:
       - run: ${{ env.GPR_LOGIN }}
       - run: docker pull ${{ env.GPR_TAG }} || true
@@ -37,6 +39,8 @@ jobs:
         name: [gpr_tag]
         run: [1, 2]
       max-parallel: 1
+    env:
+      NAME: ${{ matrix.name }}
     steps:
       - run: ${{ env.GPR_LOGIN }}
       - run: docker pull ${{ env.GPR_TAG }} || true
@@ -51,6 +55,7 @@ jobs:
         run: [1, 2]
       max-parallel: 1
     env:
+      NAME: ${{ matrix.name }}
       DOCKER_BUILDKIT: '1'
     steps:
       - run: ${{ env.GPR_LOGIN }}
@@ -65,6 +70,7 @@ jobs:
         run: [1, 2]
       max-parallel: 1
     env:
+      NAME: ${{ matrix.name }}
       DOCKER_BUILDKIT: '1'
     steps:
       - run: ${{ env.GPR_LOGIN }}
