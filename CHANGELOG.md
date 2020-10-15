@@ -1,3 +1,10 @@
+# [0.4.0-dev.8](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.7...v0.4.0-dev.8) (2020-10-15)
+
+
+### Features
+
+* improve output? ([615847a](https://github.com/JoshCoady/release-test/commit/615847a3dd2f3b34dff3afe814d5038203f5b539))
+
 # [0.4.0-dev.7](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.6...v0.4.0-dev.7) (2020-10-15)
 
 
