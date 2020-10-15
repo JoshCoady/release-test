@@ -1,3 +1,10 @@
+# [0.4.0-dev.6](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.5...v0.4.0-dev.6) (2020-10-15)
+
+
+### Bug Fixes
+
+* try double escaping ([718296f](https://github.com/JoshCoady/release-test/commit/718296f3a61ff708818e2c0ddff8fb0043bbe2bc))
+
 # [0.4.0-dev.5](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.4...v0.4.0-dev.5) (2020-10-15)
 
 
