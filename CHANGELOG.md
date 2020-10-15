@@ -1,3 +1,11 @@
+# [0.4.0-dev.5](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.4...v0.4.0-dev.5) (2020-10-15)
+
+
+### Bug Fixes
+
+* output multiline ([753f767](https://github.com/JoshCoady/release-test/commit/753f76705a72dd5f2387a229512bcfeff5c5a4fb))
+* output multiline with env ([74dbed9](https://github.com/JoshCoady/release-test/commit/74dbed9c2e7c4e138cd1fd6beeb97d5fc86e45f3))
+
 # [0.4.0-dev.4](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.3...v0.4.0-dev.4) (2020-10-15)
 
 
