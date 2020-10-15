@@ -1,3 +1,10 @@
+# [0.4.0-dev.9](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.8...v0.4.0-dev.9) (2020-10-15)
+
+
+### Features
+
+* more readable ([2d66c99](https://github.com/JoshCoady/release-test/commit/2d66c99d22683240672a7cfd5c6ab72578ea122d))
+
 # [0.4.0-dev.8](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.7...v0.4.0-dev.8) (2020-10-15)
 
 
