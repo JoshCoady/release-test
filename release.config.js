@@ -16,8 +16,8 @@ if (master) {
 module.exports = {
     branches: [
         'master',
-        {name: 'test', prerelease: true},
-        {name: 'dev', prerelease: true},
+        {name: 'stable', prerelease: 'test'},
+        {name: 'sandbox', prerelease: 'dev'},
     ],
     plugins,
 }

@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master
-      - test
-      - dev
+      - stable
+      - sandbox
 
 defaults:
   run:
@@ -34,13 +34,13 @@ jobs:
           echo "TARGET=PROD" >> $GITHUB_ENV
 
       - name: Deploy to TEST
-        if: github.event_name == 'push' && github.ref == 'refs/heads/test'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/stable'
         run: |
           echo "DEPLOY=true" >> $GITHUB_ENV
           echo "TARGET=TEST" >> $GITHUB_ENV
 
       - name: Deploy to DEV
-        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/sandbox'
         run: |
           echo "DEPLOY=true" >> $GITHUB_ENV
           echo "TARGET=DEV" >> $GITHUB_ENV
@@ -116,7 +116,7 @@ jobs:
         id: release
         uses: cycjimmy/semantic-release-action@v2
         with:
-#          dry_run: ${{ needs.config.outputs.target != 'PROD' }}
+          dry_run: ${{ needs.config.outputs.target == 'DEV' }}
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/git
@@ -127,6 +127,7 @@ jobs:
         run: |
           echo pub? ${{ steps.release.outputs.new_release_published }}
           echo v${{ steps.release.outputs.new_release_version }}
+          echo "${{ steps.release.outputs.new_release_channel }}"
           echo "${{ steps.release.outputs.new_release_notes }}"
 
 #      - name: Merge
@@ -146,11 +147,35 @@ jobs:
       - name: Blockify release notes
         id: blockify_release_notes
         if: steps.release.outputs.new_release_published == 'true'
+        env:
+          TARGET: ${{ needs.config.outputs.target }}
         run: |
           readarray -t lines <<<"$(echo '${{ steps.slackify_release_notes.outputs.text }}' | sed '/^$/d')"
+
+          echo "COMPARE_URL=${${lines[0]/*<}/|*}" >> $GITHUB_ENV
+
+          channel='#cms-dev'
+          message="Deploying to $TARGET"
+          case $TARGET in
+            PROD)
+              channel='#ltk-cms'
+              message='Release Deploying'
+              icon=':rocket:'
+              ;;
+            TEST)
+              icon=':mag:'
+              ;;
+            *)
+              icon=':construction:'
+              ;;
+          esac
+          echo "SLACK_CHANNEL=$channel" >> $GITHUB_ENV
+          echo "SUMMARY=$icon $message" >> $GITHUB_ENV
+
+          # collect release notes into blocks of no more than 3000 chars each (slack max)
           sections=()
-          text="Deploying ${lines[0]/|/|v}"
-          for line in "${lines[@]:1}"
+          text="${lines[1]}"
+          for line in "${lines[@]:2}"
           do
             if [ $(( ${#text} + ${#line} )) -ge 3000 ] || [[ "$line" == "*"* ]] ; then
               sections+=("$text")
@@ -159,7 +184,7 @@ jobs:
             text+="\n$line"
           done
           sections+=("$text")
-          echo 'BLOCKS<<EOF' >> $GITHUB_ENV
+          echo 'NOTES_BLOCKS<<EOF' >> $GITHUB_ENV
           printf '
             {
               \\"type\\": \\"section\\",
@@ -168,8 +193,7 @@ jobs:
                 \\"text\\": \\"%s\\"
               }
             },' "${sections[@]}" >> $GITHUB_ENV
-          sed -i '$s/,$/\nEOF/' $GITHUB_ENV
-          cat $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
 
       - name: Notify slack
         if: steps.release.outputs.new_release_published == 'true'
@@ -182,10 +206,33 @@ jobs:
 #            ${{ steps.slackify_release_notes.outputs.text }}
         uses: pullreminders/slack-action@v1.0.9
         env:
+          NEW_VERSION: v${{ steps.release.outputs.new_release_version }}
+          REPO_BASE_URL: ${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BUILDBOT_TOKEN }}
+          SUMMARY: Deploying to ${{ needs.config.outputs.target }}
         with:
           args: '{
-            \"channel\":\"U081Z9XTP\",
-            \"text\": \"Released v${{ steps.release.outputs.new_release_version }} to ${{ needs.config.outputs.target }}\",
-            \"blocks\": [ ${{ env.BLOCKS }} ]
+            \"channel\": \"U081Z9XTP\",
+            \"text\": \"${{ env.SLACK_CHANNEL }} ${{ env.SUMMARY }} (${{ env.NEW_VERSION }})\",
+            \"blocks\": [{
+              \"type\": \"header\",
+              \"text\": {
+                \"type\": \"plain_text\",
+                \"text\": \"${{ env.SUMMARY }}\"
+              }
+            },
+            ${{ env.NOTES_BLOCKS }}
+            {
+              \"type\": \"context\",
+              \"elements\": [{
+                \"type\": \"mrkdwn\",
+                \"text\": \":label: *<${{ env.REPO_BASE_URL }}/releases/tag/${{ env.NEW_VERSION }}|${{ env.NEW_VERSION }}>*\"
+              }, {
+                \"type\": \"mrkdwn\",
+                \"text\": \":octocat: <${{ env.REPO_BASE_URL }}/tree/${{ env.NEW_VERSION }}|code>\"
+              }, {
+                \"type\": \"mrkdwn\",
+                \"text\": \":bookmark_tabs: <${{ env.COMPARE_URL }}#files_bucket|changes>\"
+              }]
+            }]
           }'
