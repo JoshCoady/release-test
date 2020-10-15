@@ -168,7 +168,7 @@ jobs:
                 \\"text\\": \\"%s\\"
               }
             },' "${sections[@]}" >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          sed '$s/,$/\nEOF/' $GITHUB_ENV
           cat $GITHUB_ENV
 
       - name: Notify slack
@@ -187,5 +187,5 @@ jobs:
           args: '{
             \"channel\":\"U081Z9XTP\",
             \"text\": \"Released v${{ steps.release.outputs.new_release_version }} to ${{ needs.config.outputs.target }}\",
-            \"blocks\": [ ${{ env.BLOCKS }} {}]
+            \"blocks\": [ ${{ env.BLOCKS }} ]
           }'
