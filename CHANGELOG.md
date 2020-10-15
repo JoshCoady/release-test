@@ -1,3 +1,10 @@
+# [0.4.0-dev.11](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.10...v0.4.0-dev.11) (2020-10-15)
+
+
+### Bug Fixes
+
+* try looping ([ab58dc3](https://github.com/JoshCoady/release-test/commit/ab58dc3d85861abdb4be1ea70666f4eebd2ff6a2))
+
 # [0.4.0-dev.10](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.9...v0.4.0-dev.10) (2020-10-15)
 
 
