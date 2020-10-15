@@ -1,3 +1,10 @@
+# [0.4.0-dev.13](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.12...v0.4.0-dev.13) (2020-10-15)
+
+
+### Bug Fixes
+
+* output the contents not the path ([9f298c7](https://github.com/JoshCoady/release-test/commit/9f298c753d315ff6f6d96f3a0ae62b29aaf9c7ac))
+
 # [0.4.0-dev.12](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.11...v0.4.0-dev.12) (2020-10-15)
 
 
