@@ -162,10 +162,10 @@ jobs:
           echo 'BLOCKS<<EOF' >> $GITHUB_ENV
           printf ',
             {
-              \"type\": \"section\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"%s\"
+              \\"type\\": \\"section\\",
+              \\"text\\": {
+                \\"type\\": \\"mrkdwn\\",
+                \\"text\\": \\"%s\\"
               }
             }' "${sections[@]}" >> $GITHUB_ENV
           done
