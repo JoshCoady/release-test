@@ -149,6 +149,7 @@ jobs:
         run: |
           blocks='${{ steps.slackify_release_notes.outputs.text }}'
           blocks="${blocks//•/\}, {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"•}"
+          echo "XX $blocks XX"
           echo "::set-output name=text::$blocks"
 
       - name: Notify slack
