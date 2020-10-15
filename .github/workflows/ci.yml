@@ -155,13 +155,16 @@ jobs:
               \"text\": \"'"${lines[0]/\*/*v}"'\"
             }]
           }, {
-            \"type\": \"divider\"
-          '"$(printf '}, {
-            \"type\": \"section\",
-            \"text\": {
-              \"type\": \"mrkdwn\",
-              \"text\": \"'"${lines[@]:1}"'\"
-            }')" >> $GITHUB_ENV
+            \"type\": \"divider\"'
+          for line in "${lines[@]:1}"
+          do
+            echo '}, {
+              \"type\": \"section\",
+              \"text\": {
+                \"type\": \"mrkdwn\",
+                \"text\": \"'"$line"'\"
+              }' >> $GITHUB_ENV
+          done
           echo EOF >> $GITHUB_ENV
 
       - name: Notify slack
