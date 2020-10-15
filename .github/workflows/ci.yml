@@ -148,8 +148,13 @@ jobs:
         if: steps.release.outputs.new_release_published == 'true'
         run: |
           blocks='${{ steps.slackify_release_notes.outputs.text }}'
-          blocks="${blocks//•/\\\"\}\}, {\\\"type\\\": \\\"section\\\", \\\"text\\\": {\\\"type\\\": \\\"mrkdwn\\\", \\\"text\\\": \\\"•}"
-          echo 'TEXT<<EOF' >> $GITHUB_ENV
+          blocks="${blocks/\n\n/\n}"
+          blocks="${blocks/\*/\\\"type\\\": \\\"context\\\", \\\"elements\\\": [{\\\"type\\\": \\\"mrkdwn\\\", \\\"text\\\": \\\"*v}"
+          blocks="${blocks//\n/\n{\\\"type\\\": \\\"section\\\", \\\"text\\\": {\\\"type\\\": \\\"mrkdwn\\\", \\\"text\\\": \\\"}"
+          blocks="${blocks/\n/\\\"\}]\}, {\\\"type\\\": \\\"divider\\\"\}}}"
+          blocks="${blocks//\n/\\\"\}\},\n}"
+          blocks="$blocks\\\"\}"
+          echo 'BLOCKS<<EOF' >> $GITHUB_ENV
           echo "$blocks" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
@@ -173,15 +178,9 @@ jobs:
               \"type\": \"header\",
               \"text\": {
                 \"type\": \"plain_text\",
-                \"text\": \"Release deployed to _${{ needs.config.outputs.target }}_\"
+                \"text\": \"Release Log\"
               }
             }, {
-              \"type\": \"divider\"
-            }, {
-              \"type\": \"context\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"${{ env.TEXT }}\"
-              }
+              ${{ env.BLOCKS }}
             }]
           }'
