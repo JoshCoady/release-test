@@ -17,7 +17,7 @@ module.exports = {
     branches: [
         'master',
         {name: 'stable', prerelease: 'test'},
-        {name: 'sandbox', prerelease: process.env.GITHUB_REF},
+        {name: 'sandbox', prerelease: 'dev', channel: process.env.GITHUB_REF},
     ],
     plugins,
 }

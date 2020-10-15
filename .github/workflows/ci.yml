@@ -34,13 +34,13 @@ jobs:
           echo "TARGET=PROD" >> $GITHUB_ENV
 
       - name: Deploy to TEST
-        if: github.event_name == 'push' && github.ref == 'refs/heads/test'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/stable'
         run: |
           echo "DEPLOY=true" >> $GITHUB_ENV
           echo "TARGET=TEST" >> $GITHUB_ENV
 
       - name: Deploy to DEV
-        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/sandbox'
         run: |
           echo "DEPLOY=true" >> $GITHUB_ENV
           echo "TARGET=DEV" >> $GITHUB_ENV
@@ -127,6 +127,7 @@ jobs:
         run: |
           echo pub? ${{ steps.release.outputs.new_release_published }}
           echo v${{ steps.release.outputs.new_release_version }}
+          echo "${{ steps.release.outputs.new_release_channel }}"
           echo "${{ steps.release.outputs.new_release_notes }}"
 
 #      - name: Merge
