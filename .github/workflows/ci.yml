@@ -89,7 +89,7 @@ jobs:
       - run: echo '${{ needs.test2_out.outputs.test2_var }}'
 
   test:
-    if: needs.config.outputs.test
+    if: needs.config.outputs.test == true
     runs-on: ubuntu-latest
     needs: config
     steps:
@@ -100,7 +100,7 @@ jobs:
         run: ./test.sh
 
   deploy:
-    if: needs.config.outputs.deploy
+    if: needs.config.outputs.deploy == true
     runs-on: ubuntu-latest
     needs: [config, test]
     steps:
