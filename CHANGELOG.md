@@ -1,3 +1,10 @@
+# [0.4.0-dev.10](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.9...v0.4.0-dev.10) (2020-10-15)
+
+
+### Bug Fixes
+
+* better EOF ([f332482](https://github.com/JoshCoady/release-test/commit/f332482bf822091b0605792be52f05b5f17f0205))
+
 # [0.4.0-dev.9](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.8...v0.4.0-dev.9) (2020-10-15)
 
 
