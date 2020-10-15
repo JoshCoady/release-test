@@ -1,3 +1,10 @@
+# [0.4.0-dev.12](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.11...v0.4.0-dev.12) (2020-10-15)
+
+
+### Features
+
+* add debug output ([a16f57b](https://github.com/JoshCoady/release-test/commit/a16f57b40fce8f3a085e0c85fedee01da47f0eae))
+
 # [0.4.0-dev.11](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.10...v0.4.0-dev.11) (2020-10-15)
 
 
