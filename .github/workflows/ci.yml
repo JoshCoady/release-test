@@ -160,14 +160,14 @@ jobs:
           done
           sections+=("$text")
           echo 'BLOCKS<<EOF' >> $GITHUB_ENV
-          printf ',
+          printf '
             {
               \\"type\\": \\"section\\",
               \\"text\\": {
                 \\"type\\": \\"mrkdwn\\",
                 \\"text\\": \\"%s\\"
               }
-            }' "${sections[@]}" >> $GITHUB_ENV
+            },' "${sections[@]}" >> $GITHUB_ENV
           done
           echo 'EOF' >> $GITHUB_ENV
 
@@ -187,5 +187,5 @@ jobs:
           args: '{
             \"channel\":\"U081Z9XTP\",
             \"text\": \"Released v${{ steps.release.outputs.new_release_version }} to ${{ needs.config.outputs.target }}\",
-            \"blocks\": [ ${{ env.BLOCKS }} ]
+            \"blocks\": [ ${{ env.BLOCKS }} {}]
           }'
