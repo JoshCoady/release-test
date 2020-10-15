@@ -159,7 +159,7 @@ jobs:
               \"text\": \"'"${lines[0]/\*/*v}"'\"
             }]
           }, {
-            \"type\": \"divider\"'
+            \"type\": \"divider\"' >> $GITHUB_ENV
           for line in "${lines[@]:1}"
           do
             echo '}, {
