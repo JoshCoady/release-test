@@ -4,10 +4,8 @@ on:
   push:
     branches:
       - master
-      - prod
-  release:
-    types:
-      - created
+      - test
+      - dev
 
 defaults:
   run:
@@ -18,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEPLOY: false
-      TARGET: DEV
+      TARGET: PR
       TEST: true
     outputs:
       deploy: ${{ env.DEPLOY }}
@@ -29,21 +27,24 @@ jobs:
         if: github.event_name == 'pull_request' && github.event.pull_request.draft
         run: echo "::set-env name=TEST::false"
 
-      - name: Deploy to DEV if pull request labelled 'deploy'
-        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy')
-        run: echo "::set-env name=DEPLOY::true"
-
-      - name: Deploy to TEST if push to master
+      - name: Deploy to PROD
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          echo "::set-env name=DEPLOY::true"
+          echo "::set-env name=TARGET::PROD"
+
+      - name: Deploy to TEST
+        if: github.event_name == 'push' && github.ref == 'refs/heads/test'
         run: |
           echo "::set-env name=DEPLOY::true"
           echo "::set-env name=TARGET::TEST"
 
-      - name: Deploy to PROD if release
-        if: github.event_name == 'release' && github.ref == 'refs/heads/master'
+      - name: Deploy to DEV
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
         run: |
           echo "::set-env name=DEPLOY::true"
-          echo "::set-env name=TARGET::PROD"
+          echo "::set-env name=TARGET::DEV"
+          echo "::set-env name=TEST::false"
 
   test1_out:
     runs-on: ubuntu-latest
@@ -87,8 +88,8 @@ jobs:
     steps:
       - run: echo '${{ needs.test2_out.outputs.test2_var }}'
 
-  build:
-    name: CI
+  test:
+    if: needs.config.outputs.test
     runs-on: ubuntu-latest
     needs: config
     steps:
@@ -98,11 +99,19 @@ jobs:
       - name: Test
         run: ./test.sh
 
+  deploy:
+    if: needs.config.outputs.deploy
+    runs-on: ubuntu-latest
+    needs: [config, test]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Release
         id: release
         uses: cycjimmy/semantic-release-action@v2
-        with:
-          dry_run: ${{ needs.config.outputs.target != 'PROD' }}
+#        with:
+#          dry_run: ${{ needs.config.outputs.target != 'PROD' }}
 #          extra_plugins: |
 #            @semantic-release/changelog
 #            @semantic-release/git
@@ -144,12 +153,12 @@ jobs:
         with:
           args: '{
             \"channel\":\"U081Z9XTP\",
-            \"text\": \"Released v${{ steps.release.outputs.new_release_version }}\",
+            \"text\": \"Released v${{ steps.release.outputs.new_release_version }} to ${{ needs.config.outputs.target }}\",
             \"blocks\": [{
               \"type\": \"section\",
               \"text\": {
                 \"type\": \"mrkdwn\",
-                \"text\": \"Released v${{ steps.release.outputs.new_release_version }}\"
+                \"text\": \"Released v${{ steps.release.outputs.new_release_version }} to _${{ needs.config.outputs.target }}_\"
               }
             }, {
               \"type\": \"divider\"
