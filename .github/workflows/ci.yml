@@ -148,24 +148,26 @@ jobs:
         if: steps.release.outputs.new_release_published == 'true'
         run: |
           readarray -t lines <<<"$(echo '${{ steps.slackify_release_notes.outputs.text }}' | sed '/^$/d')"
-          echo 'BLOCKS<<EOF
-            {
-              \"type\": \"section\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"Deploying '"${lines[0]/|/|v}"'\"
-              }
-            }' >> $GITHUB_ENV
+          sections=()
+          text="Deploying ${lines[0]/|/|v}"
           for line in "${lines[@]:1}"
           do
-            echo ',
+            if [ $(( ${#text} + ${#line} )) -ge 3000 ] || [[ "$line" == "*"* ]] ; then
+              sections+=("$text")
+              text=""
+            fi
+            text+="\n$line"
+          done
+          sections+=("$text")
+          echo 'BLOCKS<<EOF' >> $GITHUB_ENV
+          echo "$(printf ',
               {
                 \"type\": \"section\",
                 \"text\": {
                   \"type\": \"mrkdwn\",
-                  \"text\": \"'"$line"'\"
+                  \"text\": \"%s\"
                 }
-              }' >> $GITHUB_ENV
+              }' "${sections[@]}")" >> $GITHUB_ENV
           done
           echo 'EOF' >> $GITHUB_ENV
 
