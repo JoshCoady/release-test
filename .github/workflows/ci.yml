@@ -177,7 +177,7 @@ jobs:
 #        with:
 #          token: ${{secrets.SLACK_BUILDBOT_TOKEN}} # your slack bot key
 #          secret: ${{secrets.SS}} # your slack signing secret
-#          channel: U081Z9XTP
+#          channel: U081Z9XTP # gasdl
 #          message: |
 #            ${{ steps.slackify_release_notes.outputs.text }}
         uses: pullreminders/slack-action@v1.0.9
