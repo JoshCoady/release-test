@@ -146,8 +146,6 @@ jobs:
       - name: Blockify release notes
         id: blockify_release_notes
         if: steps.release.outputs.new_release_published == 'true'
-        outputs:
-          text: ${{ env.TEXT }}
         run: |
           blocks='${{ steps.slackify_release_notes.outputs.text }}'
           blocks="${blocks//•/\"\}\}, {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"•}"
@@ -183,7 +181,7 @@ jobs:
               \"type\": \"section\",
               \"text\": {
                 \"type\": \"mrkdwn\",
-                \"text\": \"${{ steps.blockify_release_notes.outputs.text }}\"
+                \"text\": \"${{ env.TEXT }}\"
               }
             }]
           }'
