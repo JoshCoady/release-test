@@ -30,21 +30,21 @@ jobs:
       - name: Deploy to PROD
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
-          echo "::set-env name=DEPLOY::true"
-          echo "::set-env name=TARGET::PROD"
+          echo "DEPLOY=true" >> $GITHUB_ENV
+          echo "TARGET=PROD" >> $GITHUB_ENV
 
       - name: Deploy to TEST
         if: github.event_name == 'push' && github.ref == 'refs/heads/test'
         run: |
-          echo "::set-env name=DEPLOY::true"
-          echo "::set-env name=TARGET::TEST"
+          echo "DEPLOY=true" >> $GITHUB_ENV
+          echo "TARGET=TEST" >> $GITHUB_ENV
 
       - name: Deploy to DEV
         if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
         run: |
-          echo "::set-env name=DEPLOY::true"
-          echo "::set-env name=TARGET::DEV"
-          echo "::set-env name=TEST::false"
+          echo "DEPLOY=true" >> $GITHUB_ENV
+          echo "TARGET=DEV" >> $GITHUB_ENV
+          echo "TEST=false" >> $GITHUB_ENV
 
   test1_out:
     runs-on: ubuntu-latest
@@ -143,6 +143,14 @@ jobs:
         with:
           text: ${{ steps.release.outputs.new_release_notes }}
 
+      - name: Blockify release notes
+        id: blockify_release_notes
+        if: steps.release.outputs.new_release_published == 'true'
+        run: |
+          blocks='${{ steps.slackify_release_notes.outputs.text }}'
+          blocks="${blocks//•/\}, {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"•}"
+          echo "::set-output name=text::$blocks"
+
       - name: Notify slack
         if: steps.release.outputs.new_release_published == 'true'
 #        uses: aibexhq/slack-rich-notify@v1.0.2
@@ -171,7 +179,7 @@ jobs:
               \"type\": \"section\",
               \"text\": {
                 \"type\": \"mrkdwn\",
-                \"text\": \"${{ steps.slackify_release_notes.outputs.text }}\"
+                \"text\": \"${{ steps.blockify_release_notes.outputs.text }}\"
               }
             }]
           }'
