@@ -1,3 +1,10 @@
+# [0.4.0-dev.7](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.6...v0.4.0-dev.7) (2020-10-15)
+
+
+### Bug Fixes
+
+* dont mneed to escape the brackets ([1b4540e](https://github.com/JoshCoady/release-test/commit/1b4540ecdc15ca7cae34ab9d7444c1b054b3e548))
+
 # [0.4.0-dev.6](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.5...v0.4.0-dev.6) (2020-10-15)
 
 
