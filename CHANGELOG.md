@@ -1,3 +1,10 @@
+# [0.4.0-dev.2](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.1...v0.4.0-dev.2) (2020-10-15)
+
+
+### Features
+
+* better blocks ([9f1ef61](https://github.com/JoshCoady/release-test/commit/9f1ef61b389d3b3e237f531ddc975999766bb48c))
+
 # [0.4.0-dev.1](https://github.com/JoshCoady/release-test/compare/v0.3.0...v0.4.0-dev.1) (2020-10-15)
 
 
