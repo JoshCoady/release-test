@@ -88,6 +88,15 @@ jobs:
     steps:
       - run: echo '${{ needs.test2_out.outputs.test2_var }}'
 
+  echo:
+    runs-on: ubuntu-latest
+    needs: config
+    steps:
+      - run: |
+          echo deploy="${{ needs.config.outputs.deploy }}"
+          echo target="${{ needs.config.outputs.target }}"
+          echo test="${{ needs.config.outputs.test }}"
+
   test:
     if: needs.config.outputs.test == 'true'
     runs-on: ubuntu-latest
