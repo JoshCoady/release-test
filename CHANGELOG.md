@@ -1,3 +1,10 @@
+# [0.4.0-dev.15](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.14...v0.4.0-dev.15) (2020-10-15)
+
+
+### Features
+
+* simplify block output ([362ffd5](https://github.com/JoshCoady/release-test/commit/362ffd51f3144fc2d23dccf6d03b8637f570731a))
+
 # [0.4.0-dev.14](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.13...v0.4.0-dev.14) (2020-10-15)
 
 
