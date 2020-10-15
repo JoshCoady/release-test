@@ -148,29 +148,26 @@ jobs:
         if: steps.release.outputs.new_release_published == 'true'
         run: |
           readarray -t lines <<<"$(echo '${{ steps.slackify_release_notes.outputs.text }}' | sed '/^$/d')"
-          for line in "${lines[@]:1}"
-          do
-            echo "$line"
-          done
           echo 'BLOCKS<<EOF
-            \"type\": \"context\",
-            \"elements\": [{
-              \"type\": \"mrkdwn\",
-              \"text\": \"'"${lines[0]/\*/*v}"'\"
-            }]
-          }, {
-            \"type\": \"divider\"' >> $GITHUB_ENV
-          for line in "${lines[@]:1}"
-          do
-            echo '}, {
+            {
               \"type\": \"section\",
               \"text\": {
                 \"type\": \"mrkdwn\",
-                \"text\": \"'"$line"'\"
+                \"text\": \"*Release Log* '"${lines[0]/|/|v}"'\"
+              }
+            }' >> $GITHUB_ENV
+          for line in "${lines[@]:1}"
+          do
+            echo ',
+              {
+                \"type\": \"section\",
+                \"text\": {
+                  \"type\": \"mrkdwn\",
+                  \"text\": \"'"$line"'\"
+                }
               }' >> $GITHUB_ENV
           done
           echo 'EOF' >> $GITHUB_ENV
-          cat "$GITHUB_ENV"
 
       - name: Notify slack
         if: steps.release.outputs.new_release_published == 'true'
@@ -188,13 +185,5 @@ jobs:
           args: '{
             \"channel\":\"U081Z9XTP\",
             \"text\": \"Released v${{ steps.release.outputs.new_release_version }} to ${{ needs.config.outputs.target }}\",
-            \"blocks\": [{
-              \"type\": \"header\",
-              \"text\": {
-                \"type\": \"plain_text\",
-                \"text\": \"Release Log\"
-              }
-            }, {
-              ${{ env.BLOCKS }}
-            }]
+            \"blocks\": [ ${{ env.BLOCKS }} ]
           }'
