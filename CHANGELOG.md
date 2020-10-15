@@ -1,3 +1,10 @@
+# [0.4.0-dev.14](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.13...v0.4.0-dev.14) (2020-10-15)
+
+
+### Bug Fixes
+
+* missing file ouytput ([123d919](https://github.com/JoshCoady/release-test/commit/123d9191d3cae9ec2b18dc9d211fd43c39d0bb09))
+
 # [0.4.0-dev.13](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.12...v0.4.0-dev.13) (2020-10-15)
 
 
