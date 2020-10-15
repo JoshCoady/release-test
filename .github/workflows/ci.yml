@@ -113,7 +113,7 @@ jobs:
         run: |
           echo pub? ${{ steps.release.outputs.new_release_published }}
           echo v${{ steps.release.outputs.new_release_version }}
-          echo ${{ steps.release.outputs.new_release_notes }}
+          echo "${{ steps.release.outputs.new_release_notes }}"
 
 #      - name: Merge
 #        if: steps.release.outputs.new_release_published == 'true' && github.ref == 'refs/heads/prod'
