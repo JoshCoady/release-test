@@ -1,3 +1,10 @@
+# [0.4.0-dev.4](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.3...v0.4.0-dev.4) (2020-10-15)
+
+
+### Bug Fixes
+
+* block syntax ([543d453](https://github.com/JoshCoady/release-test/commit/543d4530af50a6c45c1d3b10fa70bf8fe13c7088))
+
 # [0.4.0-dev.3](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.2...v0.4.0-dev.3) (2020-10-15)
 
 
