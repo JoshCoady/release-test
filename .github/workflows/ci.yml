@@ -148,6 +148,10 @@ jobs:
         if: steps.release.outputs.new_release_published == 'true'
         run: |
           readarray -t lines <<<"$(echo '${{ steps.slackify_release_notes.outputs.text }}' | sed '/^$/d')"
+          for line in "${lines[@]:1}"
+          do
+            echo "$line"
+          done
           echo 'BLOCKS<<EOF
             \"type\": \"context\",
             \"elements\": [{
@@ -165,7 +169,8 @@ jobs:
                 \"text\": \"'"$line"'\"
               }' >> $GITHUB_ENV
           done
-          echo EOF >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+          echo "$GITHUB_ENV"
 
       - name: Notify slack
         if: steps.release.outputs.new_release_published == 'true'
