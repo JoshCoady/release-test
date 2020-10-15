@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master
-      - test
-      - dev
+      - stable
+      - sandbox
 
 defaults:
   run:
