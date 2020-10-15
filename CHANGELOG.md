@@ -1,6 +1,18 @@
 # [0.4.0-dev.9](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.8...v0.4.0-dev.9) (2020-10-15)
 
 
+### Bug Fixes
+
+* by adding a space ([d574ac9](https://github.com/JoshCoady/release-test/commit/d574ac96339e6d9027951ff86eb297e425c5e7fb))
+
+
+### Features
+
+* more readable ([2d66c99](https://github.com/JoshCoady/release-test/commit/2d66c99d22683240672a7cfd5c6ab72578ea122d))
+
+# [0.4.0-dev.9](https://github.com/JoshCoady/release-test/compare/v0.4.0-dev.8...v0.4.0-dev.9) (2020-10-15)
+
+
 ### Features
 
 * more readable ([2d66c99](https://github.com/JoshCoady/release-test/commit/2d66c99d22683240672a7cfd5c6ab72578ea122d))
