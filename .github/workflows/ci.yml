@@ -168,7 +168,7 @@ jobs:
                 \\"text\\": \\"%s\\"
               }
             },' "${sections[@]}" >> $GITHUB_ENV
-          sed '$s/,$/\nEOF/' $GITHUB_ENV
+          sed -i '$s/,$/\nEOF/' $GITHUB_ENV
           cat $GITHUB_ENV
 
       - name: Notify slack
