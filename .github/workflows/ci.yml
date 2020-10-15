@@ -5,34 +5,68 @@ on:
     branches:
       - master
       - prod
+  release:
+    types:
+      - created
 
 defaults:
   run:
     shell: bash
 
 jobs:
+  config:
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY: false
+      TARGET: DEV
+      TEST: true
+    outputs:
+      deploy: ${{ env.DEPLOY }}
+      target: ${{ env.TARGET }}
+      test: ${{ env.TEST }}
+    steps:
+      - name: Skip testing if draft pull request
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft
+        run: echo "::set-env name=TEST::false"
+
+      - name: Deploy to DEV if pull request labelled 'deploy'
+        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy')
+        run: echo "::set-env name=DEPLOY::true"
+
+      - name: Deploy to TEST if push to master
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          echo "::set-env name=DEPLOY::true"
+          echo "::set-env name=TARGET::TEST"
+
+      - name: Deploy to PROD if release
+        if: github.event_name == 'release' && github.ref == 'refs/heads/master'
+        run: |
+          echo "::set-env name=DEPLOY::true"
+          echo "::set-env name=TARGET::PROD"
+
   test1_out:
     runs-on: ubuntu-latest
     outputs:
       test1_var: ${{ env.TEST1_VAR }}
     steps:
       - run: echo "::set-env name=TEST1_VAR::Test1_Val"
-      - name: TF
-        if: true
-        if: false
-        run: echo "TF"
-      - name: FT
-        if: false
-        if: true
-        run: echo "FT"
-      - name: TT
-        if: true
-        if: true
-        run: echo "TT"
-      - name: FF
-        if: false
-        if: false
-        run: echo "FF"
+#      - name: TF
+#        if: true
+#        if: false
+#        run: echo "TF"
+#      - name: FT
+#        if: false
+#        if: true
+#        run: echo "FT"
+#      - name: TT
+#        if: true
+#        if: true
+#        run: echo "TT"
+#      - name: FF
+#        if: false
+#        if: false
+#        run: echo "FF"
 
   test1_in:
     needs: test1_out
@@ -56,6 +90,7 @@ jobs:
   build:
     name: CI
     runs-on: ubuntu-latest
+    needs: config
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -66,12 +101,19 @@ jobs:
       - name: Release
         id: release
         uses: cycjimmy/semantic-release-action@v2
-#        with:
+        with:
+          dry_run: ${{ needs.config.outputs.target != 'PROD' }}
 #          extra_plugins: |
 #            @semantic-release/changelog
 #            @semantic-release/git
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release Details
+        run: |
+          echo pub? ${{ steps.release.outputs.new_release_published }}
+          echo v${{ steps.release.outputs.new_release_version }}
+          echo ${{ steps.release.outputs.new_release_notes }}
 
 #      - name: Merge
 #        if: steps.release.outputs.new_release_published == 'true' && github.ref == 'refs/heads/prod'
