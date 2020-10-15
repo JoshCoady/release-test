@@ -116,7 +116,7 @@ jobs:
         id: release
         uses: cycjimmy/semantic-release-action@v2
         with:
-#          dry_run: ${{ needs.config.outputs.target != 'PROD' }}
+          dry_run: ${{ needs.config.outputs.target == 'DEV' }}
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/git
