@@ -4,10 +4,8 @@ on:
   push:
     branches:
       - master
-      - prod
-  release:
-    types:
-      - created
+      - test
+      - dev
 
 defaults:
   run:
@@ -18,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEPLOY: false
-      TARGET: DEV
+      TARGET: PR
       TEST: true
     outputs:
       deploy: ${{ env.DEPLOY }}
@@ -29,21 +27,24 @@ jobs:
         if: github.event_name == 'pull_request' && github.event.pull_request.draft
         run: echo "::set-env name=TEST::false"
 
-      - name: Deploy to DEV if pull request labelled 'deploy'
-        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy')
-        run: echo "::set-env name=DEPLOY::true"
-
-      - name: Deploy to TEST if push to master
+      - name: Deploy to PROD
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
-          echo "::set-env name=DEPLOY::true"
-          echo "::set-env name=TARGET::TEST"
+          echo "DEPLOY=true" >> $GITHUB_ENV
+          echo "TARGET=PROD" >> $GITHUB_ENV
 
-      - name: Deploy to PROD if release
-        if: github.event_name == 'release' && github.ref == 'refs/heads/master'
+      - name: Deploy to TEST
+        if: github.event_name == 'push' && github.ref == 'refs/heads/test'
         run: |
-          echo "::set-env name=DEPLOY::true"
-          echo "::set-env name=TARGET::PROD"
+          echo "DEPLOY=true" >> $GITHUB_ENV
+          echo "TARGET=TEST" >> $GITHUB_ENV
+
+      - name: Deploy to DEV
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+        run: |
+          echo "DEPLOY=true" >> $GITHUB_ENV
+          echo "TARGET=DEV" >> $GITHUB_ENV
+          echo "TEST=false" >> $GITHUB_ENV
 
   test1_out:
     runs-on: ubuntu-latest
@@ -88,24 +89,37 @@ jobs:
       - run: echo '${{ needs.test2_out.outputs.test2_var }}'
 
   build:
-    name: CI
     runs-on: ubuntu-latest
     needs: config
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - run: |
+          echo deploy="${{ needs.config.outputs.deploy }}"
+          echo target="${{ needs.config.outputs.target }}"
+          echo test="${{ needs.config.outputs.test }}"
+
       - name: Test
+        if: needs.config.outputs.test == 'true'
         run: ./test.sh
+
+  deploy:
+    if: needs.config.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    needs: [config, build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Release
         id: release
         uses: cycjimmy/semantic-release-action@v2
         with:
-          dry_run: ${{ needs.config.outputs.target != 'PROD' }}
-#          extra_plugins: |
-#            @semantic-release/changelog
-#            @semantic-release/git
+#          dry_run: ${{ needs.config.outputs.target != 'PROD' }}
+          extra_plugins: |
+            @semantic-release/changelog
+            @semantic-release/git
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -129,13 +143,41 @@ jobs:
         with:
           text: ${{ steps.release.outputs.new_release_notes }}
 
+      - name: Blockify release notes
+        id: blockify_release_notes
+        if: steps.release.outputs.new_release_published == 'true'
+        run: |
+          readarray -t lines <<<"$(echo '${{ steps.slackify_release_notes.outputs.text }}' | sed '/^$/d')"
+          sections=()
+          text="Deploying ${lines[0]/|/|v}"
+          for line in "${lines[@]:1}"
+          do
+            if [ $(( ${#text} + ${#line} )) -ge 3000 ] || [[ "$line" == "*"* ]] ; then
+              sections+=("$text")
+              text=""
+            fi
+            text+="\n$line"
+          done
+          sections+=("$text")
+          echo 'BLOCKS<<EOF' >> $GITHUB_ENV
+          printf '
+            {
+              \\"type\\": \\"section\\",
+              \\"text\\": {
+                \\"type\\": \\"mrkdwn\\",
+                \\"text\\": \\"%s\\"
+              }
+            },' "${sections[@]}" >> $GITHUB_ENV
+          sed -i '$s/,$/\nEOF/' $GITHUB_ENV
+          cat $GITHUB_ENV
+
       - name: Notify slack
         if: steps.release.outputs.new_release_published == 'true'
 #        uses: aibexhq/slack-rich-notify@v1.0.2
 #        with:
 #          token: ${{secrets.SLACK_BUILDBOT_TOKEN}} # your slack bot key
 #          secret: ${{secrets.SS}} # your slack signing secret
-#          channel: U081Z9XTP
+#          channel: U081Z9XTP # gasdl
 #          message: |
 #            ${{ steps.slackify_release_notes.outputs.text }}
         uses: pullreminders/slack-action@v1.0.9
@@ -144,20 +186,6 @@ jobs:
         with:
           args: '{
             \"channel\":\"U081Z9XTP\",
-            \"text\": \"Released v${{ steps.release.outputs.new_release_version }}\",
-            \"blocks\": [{
-              \"type\": \"section\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"Released v${{ steps.release.outputs.new_release_version }}\"
-              }
-            }, {
-              \"type\": \"divider\"
-            }, {
-              \"type\": \"section\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"${{ steps.slackify_release_notes.outputs.text }}\"
-              }
-            }]
+            \"text\": \"Released v${{ steps.release.outputs.new_release_version }} to ${{ needs.config.outputs.target }}\",
+            \"blocks\": [ ${{ env.BLOCKS }} ]
           }'
