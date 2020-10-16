@@ -150,13 +150,17 @@ jobs:
         env:
           NEW_VERSION: v${{ steps.release.outputs.new_release_version }}
           REPO_BASE_URL: https://github.com/${{ github.repository }}
+          SUMMARY: Deploying to ${{ needs.config.outputs.target }}
           TARGET: ${{ needs.config.outputs.target }}
         run: |
           readarray -t lines <<<"$(echo '${{ steps.slackify_release_notes.outputs.text }}' | sed '/^$/d')"
 
           echo 's/.*<\(.*\)\|.*/\1/'
           echo "${lines[0]}"
-          sed 's/.*<\(.*\)\|.*/\1/' <<< "${lines[0]}"
+          sed 's/.*<\(.*\)\|.*/XX\1XX/' <<< "${lines[0]}"
+          sed 's/.*<\(.*\)dev.*/XX\1XX/' <<< "${lines[0]}"
+          sed 's/.*<\(.*?\)\|.*/XX\1XX/' <<< "${lines[0]}"
+          sed 's/^.*<\(.*\)\|.*$/XX\1XX/' <<< "${lines[0]}"
           compare_url="$(sed 's/.*<\(.*\)\|0.*/\1/' <<< "${lines[0]}")"
           echo "$compare_url"
 
@@ -167,6 +171,7 @@ jobs:
               },'
           channel='#cms-dev'
           message="Deploying to $TARGET"
+          version_suffix=" ($NEW_VERSION)"
           case $TARGET in
             PROD)
               channel='#ltk-cms'
@@ -181,10 +186,13 @@ jobs:
               compare_url="$REPO_BASE_URL/compare/sandbox"
               context_release=''
               icon=':construction:'
+              lines=()
+              version_suffix=''
               ;;
           esac
+
+          echo "SLACT_TEXT=$icon $message$version_suffix" >> $GITHUB_ENV
           echo "SLACK_CHANNEL=$channel" >> $GITHUB_ENV
-          echo "SUMMARY=$icon $message" >> $GITHUB_ENV
 
           # collect release notes into blocks of no more than 3000 chars each (slack max)
           sections=()
@@ -193,12 +201,20 @@ jobs:
           do
             if [ $(( ${#text} + ${#line} )) -ge 3000 ] || [[ "$line" == "*"* ]] ; then
               sections+=("$text")
-              text=""
+              text=''
             fi
             text+="\n$line"
           done
           sections+=("$text")
-          echo 'NOTES_BLOCKS<<EOF' >> $GITHUB_ENV
+          echo 'SLACK_BLOCKS<<EOF' >> $GITHUB_ENV
+          echo '
+            {
+              \"type\": \"header\",
+              \"text\": {
+                \"type\": \"plain_text\",
+                \"text\": \"'"$icon $message"'\"
+              }
+            }' >> $GITHUB_ENV
           printf ',
             {
               \\"type\\": \\"section\\",
@@ -207,9 +223,6 @@ jobs:
                 \\"text\\": \\"%s\\"
               }
             }\n' "${sections[@]}" >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
-
-          echo 'CONTEXT_BLOCK<<EOF' >> $GITHUB_ENV
           echo ',
             {
               \"type\": \"context\",
@@ -234,22 +247,10 @@ jobs:
 #            ${{ steps.slackify_release_notes.outputs.text }}
         uses: pullreminders/slack-action@v1.0.9
         env:
-          NEW_VERSION: v${{ steps.release.outputs.new_release_version }}
-          REPO_BASE_URL: https://github.com/${{ github.repository }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BUILDBOT_TOKEN }}
-          SUMMARY: Deploying to ${{ needs.config.outputs.target }}
         with:
           args: '{
             \"channel\": \"U081Z9XTP\",
-            \"text\": \"${{ env.SUMMARY }} (${{ env.NEW_VERSION }})\",
-            \"blocks\": [{
-              \"type\": \"header\",
-              \"text\": {
-                \"type\": \"plain_text\",
-                \"text\": \"${{ env.SUMMARY }}\"
-              }
-            }
-            ${{ env.NOTES_BLOCKS }}
-            ${{ env.CONTEXT_BLOCK }}
-            ]
+            \"text\": \"${{ env.SLACK_TEXT }}\",
+            \"blocks\": [${{ env.SLACK_BLOCKS }}]
           }'
