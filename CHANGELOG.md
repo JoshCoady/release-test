@@ -1,3 +1,22 @@
+# [0.6.0](https://github.com/JoshCoady/release-test/compare/v0.5.0...v0.6.0) (2020-10-16)
+
+
+### Bug Fixes
+
+* another test ([b749e45](https://github.com/JoshCoady/release-test/commit/b749e45e2a7aacd88879776a12cdc63acfa9b81c))
+* another try at the compare url ([917e376](https://github.com/JoshCoady/release-test/commit/917e376000975076b0685058f4c27a6ba56b1f3b))
+* cant find `EOF` ([40b5cef](https://github.com/JoshCoady/release-test/commit/40b5cef330f07015bf22802442aef4ce71f2eda6))
+* correct base repo URL ([baffb64](https://github.com/JoshCoady/release-test/commit/baffb641ec93dd617f010d09f13abcb111f30830))
+* fix var expansion ([9b3fc51](https://github.com/JoshCoady/release-test/commit/9b3fc517be4e60b91114c9fea5142e1a9a2ad994))
+* just some cleanup ([d8071f4](https://github.com/JoshCoady/release-test/commit/d8071f40aae59efbaa4d716abf6955de3734aca0))
+
+
+### Features
+
+* diff output for dev ([da9fe28](https://github.com/JoshCoady/release-test/commit/da9fe28a0024dc68efafe968517a4ef7d7a3eef3))
+* reduce dev output further ([4ca921e](https://github.com/JoshCoady/release-test/commit/4ca921e420f719f9f7fc2b6df8c979e0f81c3a99))
+* reorg and fix a prob ([d29ab51](https://github.com/JoshCoady/release-test/commit/d29ab513011614c98f5800ef904142d97d55105a))
+
 # [0.5.0](https://github.com/JoshCoady/release-test/compare/v0.4.0...v0.5.0) (2020-10-16)
 
 
