@@ -207,7 +207,7 @@ jobs:
         uses: pullreminders/slack-action@v1.0.9
         env:
           NEW_VERSION: v${{ steps.release.outputs.new_release_version }}
-          REPO_BASE_URL: ${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}
+          REPO_BASE_URL: https://github.com/${{ github.repository }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BUILDBOT_TOKEN }}
           SUMMARY: Deploying to ${{ needs.config.outputs.target }}
         with:
