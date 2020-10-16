@@ -192,7 +192,7 @@ jobs:
                 \\"type\\": \\"mrkdwn\\",
                 \\"text\\": \\"%s\\"
               }
-            },' "${sections[@]}" >> $GITHUB_ENV
+            },\n' "${sections[@]}" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
       - name: Notify slack
