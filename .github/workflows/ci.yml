@@ -150,11 +150,25 @@ jobs:
         env:
           NEW_VERSION: v${{ steps.release.outputs.new_release_version }}
           REPO_BASE_URL: https://github.com/${{ github.repository }}
-          SUMMARY: Deploying to ${{ needs.config.outputs.target }}
           TARGET: ${{ needs.config.outputs.target }}
         run: |
+          # split release notes into array of lines (and drop blank lines)
           readarray -t lines <<<"$(echo '${{ steps.slackify_release_notes.outputs.text }}' | sed '/^$/d')"
 
+          # collect release notes into blocks of no more than 3000 chars each (slack max)
+          sections=()
+          text="${lines[1]}"
+          for line in "${lines[@]:2}"
+          do
+            if [ $(( ${#text} + ${#line} )) -ge 3000 ] || [[ "$line" == "*"* ]] ; then
+              sections+=("$text")
+              text=''
+            fi
+            text+="\n$line"
+          done
+          sections+=("$text")
+
+          # set default values
           echo 's/.*<\(.*\)\|.*/\1/'
           echo "${lines[0]}"
           sed 's/.*<\(.*\)\|.*/XX\1XX/' <<< "${lines[0]}"
@@ -172,6 +186,8 @@ jobs:
           channel='#cms-dev'
           message="Deploying to $TARGET"
           version_suffix=" ($NEW_VERSION)"
+
+          # make target-specific changes
           case $TARGET in
             PROD)
               channel='#ltk-cms'
@@ -186,26 +202,14 @@ jobs:
               compare_url="$REPO_BASE_URL/compare/sandbox"
               context_release=''
               icon=':construction:'
-              lines=()
+              sections=()
               version_suffix=''
               ;;
           esac
 
-          echo "SLACT_TEXT=$icon $message$version_suffix" >> $GITHUB_ENV
+          # output env vars to use in next step
+          echo "SLACK_TEXT=$icon $message$version_suffix" >> $GITHUB_ENV
           echo "SLACK_CHANNEL=$channel" >> $GITHUB_ENV
-
-          # collect release notes into blocks of no more than 3000 chars each (slack max)
-          sections=()
-          text="${lines[1]}"
-          for line in "${lines[@]:2}"
-          do
-            if [ $(( ${#text} + ${#line} )) -ge 3000 ] || [[ "$line" == "*"* ]] ; then
-              sections+=("$text")
-              text=''
-            fi
-            text+="\n$line"
-          done
-          sections+=("$text")
           echo 'SLACK_BLOCKS<<EOF' >> $GITHUB_ENV
           echo '
             {
@@ -215,14 +219,17 @@ jobs:
                 \"text\": \"'"$icon $message"'\"
               }
             }' >> $GITHUB_ENV
-          printf ',
-            {
-              \\"type\\": \\"section\\",
-              \\"text\\": {
-                \\"type\\": \\"mrkdwn\\",
-                \\"text\\": \\"%s\\"
-              }
-            }\n' "${sections[@]}" >> $GITHUB_ENV
+          if [ ${#sections[@]} -gt 0 ]
+          then
+            printf ',
+              {
+                \\"type\\": \\"section\\",
+                \\"text\\": {
+                  \\"type\\": \\"mrkdwn\\",
+                  \\"text\\": \\"%s\\"
+                }
+              }\n' "${sections[@]}" >> $GITHUB_ENV
+          fi
           echo ',
             {
               \"type\": \"context\",
