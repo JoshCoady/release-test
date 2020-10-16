@@ -148,29 +148,12 @@ jobs:
         id: blockify_release_notes
         if: steps.release.outputs.new_release_published == 'true'
         env:
+          NEW_VERSION: v${{ steps.release.outputs.new_release_version }}
+          REPO_BASE_URL: https://github.com/${{ github.repository }}
           TARGET: ${{ needs.config.outputs.target }}
         run: |
+          # split release notes into array of lines (and drop blank lines)
           readarray -t lines <<<"$(echo '${{ steps.slackify_release_notes.outputs.text }}' | sed '/^$/d')"
-
-          echo "COMPARE_URL=$(sed 's/.*<\(.*\)\|.*/\1/' <<< "$lines[0]")" >> $GITHUB_ENV
-
-          channel='#cms-dev'
-          message="Deploying to $TARGET"
-          case $TARGET in
-            PROD)
-              channel='#ltk-cms'
-              message='Release Deploying'
-              icon=':rocket:'
-              ;;
-            TEST)
-              icon=':mag:'
-              ;;
-            *)
-              icon=':construction:'
-              ;;
-          esac
-          echo "SLACK_CHANNEL=$channel" >> $GITHUB_ENV
-          echo "SUMMARY=$icon $message" >> $GITHUB_ENV
 
           # collect release notes into blocks of no more than 3000 chars each (slack max)
           sections=()
@@ -179,20 +162,77 @@ jobs:
           do
             if [ $(( ${#text} + ${#line} )) -ge 3000 ] || [[ "$line" == "*"* ]] ; then
               sections+=("$text")
-              text=""
+              text=''
             fi
             text+="\n$line"
           done
           sections+=("$text")
-          echo 'NOTES_BLOCKS<<EOF' >> $GITHUB_ENV
-          printf '
+
+          # set default values
+          compare_url="$(sed 's:.*<\(.*\)|.*:\1:' <<< "${lines[0]}")"
+          code_url="$REPO_BASE_URL/tree/$NEW_VERSION"
+          context_release='{
+                \"type\": \"mrkdwn\",
+                \"text\": \":label: *<'"$REPO_BASE_URL/releases/tag/$NEW_VERSION|$NEW_VERSION"'>*\"
+              },'
+          channel='#cms-dev'
+          message="Deploying to $TARGET"
+          version_suffix=" ($NEW_VERSION)"
+
+          # make target-specific changes
+          case $TARGET in
+            PROD)
+              channel='#ltk-cms'
+              icon=':rocket:'
+              message='Release Deploying'
+              ;;
+            TEST)
+              icon=':mag:'
+              ;;
+            DEV)
+              code_url="$REPO_BASE_URL/tree/sandbox"
+              compare_url="$REPO_BASE_URL/compare/sandbox"
+              context_release=''
+              icon=':construction:'
+              sections=()
+              version_suffix=''
+              ;;
+          esac
+
+          # output env vars to use in next step
+          echo "SLACK_TEXT=$icon $message$version_suffix" >> $GITHUB_ENV
+          echo "SLACK_CHANNEL=$channel" >> $GITHUB_ENV
+          echo 'SLACK_BLOCKS<<EOF' >> $GITHUB_ENV
+          echo '
             {
-              \\"type\\": \\"section\\",
-              \\"text\\": {
-                \\"type\\": \\"mrkdwn\\",
-                \\"text\\": \\"%s\\"
+              \"type\": \"header\",
+              \"text\": {
+                \"type\": \"plain_text\",
+                \"text\": \"'"$icon $message"'\"
               }
-            },' "${sections[@]}" >> $GITHUB_ENV
+            }' >> $GITHUB_ENV
+          if [ ${#sections[@]} -gt 0 ]
+          then
+            printf ',
+              {
+                \\"type\\": \\"section\\",
+                \\"text\\": {
+                  \\"type\\": \\"mrkdwn\\",
+                  \\"text\\": \\"%s\\"
+                }
+              }\n' "${sections[@]}" >> $GITHUB_ENV
+          fi
+          echo ',
+            {
+              \"type\": \"context\",
+              \"elements\": ['"$context_release"' {
+                \"type\": \"mrkdwn\",
+                \"text\": \":octocat: <'"$code_url"'|code>\"
+              }, {
+                \"type\": \"mrkdwn\",
+                \"text\": \":bookmark_tabs: <'"$compare_url"'#files_bucket|changes>\"
+              }]
+            }' >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
       - name: Notify slack
@@ -206,33 +246,10 @@ jobs:
 #            ${{ steps.slackify_release_notes.outputs.text }}
         uses: pullreminders/slack-action@v1.0.9
         env:
-          NEW_VERSION: v${{ steps.release.outputs.new_release_version }}
-          REPO_BASE_URL: ${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BUILDBOT_TOKEN }}
-          SUMMARY: Deploying to ${{ needs.config.outputs.target }}
         with:
           args: '{
             \"channel\": \"U081Z9XTP\",
-            \"text\": \"${{ env.SLACK_CHANNEL }} ${{ env.SUMMARY }} (${{ env.NEW_VERSION }})\",
-            \"blocks\": [{
-              \"type\": \"header\",
-              \"text\": {
-                \"type\": \"plain_text\",
-                \"text\": \"${{ env.SUMMARY }}\"
-              }
-            },
-            ${{ env.NOTES_BLOCKS }}
-            {
-              \"type\": \"context\",
-              \"elements\": [{
-                \"type\": \"mrkdwn\",
-                \"text\": \":label: *<${{ env.REPO_BASE_URL }}/releases/tag/${{ env.NEW_VERSION }}|${{ env.NEW_VERSION }}>*\"
-              }, {
-                \"type\": \"mrkdwn\",
-                \"text\": \":octocat: <${{ env.REPO_BASE_URL }}/tree/${{ env.NEW_VERSION }}|code>\"
-              }, {
-                \"type\": \"mrkdwn\",
-                \"text\": \":bookmark_tabs: <${{ env.COMPARE_URL }}#files_bucket|changes>\"
-              }]
-            }]
+            \"text\": \"${{ env.SLACK_TEXT }}\",
+            \"blocks\": [${{ env.SLACK_BLOCKS }}]
           }'
