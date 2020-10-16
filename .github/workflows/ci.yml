@@ -169,15 +169,8 @@ jobs:
           sections+=("$text")
 
           # set default values
-          echo 's/.*<\(.*\)\|.*/\1/'
-          echo "${lines[0]}"
-          sed 's/.*<\(.*\)\|.*/XX\1XX/' <<< "${lines[0]}"
-          sed 's/.*<\(.*\)dev.*/XX\1XX/' <<< "${lines[0]}"
-          sed 's/.*<\(.*?\)\|.*/XX\1XX/' <<< "${lines[0]}"
-          sed 's/^.*<\(.*\)\|.*$/XX\1XX/' <<< "${lines[0]}"
-          compare_url="$(sed 's/.*<\(.*\)\|0.*/\1/' <<< "${lines[0]}")"
+          compare_url="$(sed 's:.*<\(.*\)|.*:\1:' <<< "${lines[0]}")"
           echo "$compare_url"
-
           code_url="$REPO_BASE_URL/tree/$NEW_VERSION"
           context_release='{
                 \"type\": \"mrkdwn\",
