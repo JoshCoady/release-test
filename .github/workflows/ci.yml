@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - master
-      - stable
-      - sandbox
+      - production
+    tags:
+      - dev
 
 defaults:
   run:
@@ -28,19 +29,19 @@ jobs:
         run: echo "::set-env name=TEST::false"
 
       - name: Deploy to PROD
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/production'
         run: |
           echo "DEPLOY=true" >> $GITHUB_ENV
           echo "TARGET=PROD" >> $GITHUB_ENV
 
       - name: Deploy to TEST
-        if: github.event_name == 'push' && github.ref == 'refs/heads/stable'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
           echo "DEPLOY=true" >> $GITHUB_ENV
           echo "TARGET=TEST" >> $GITHUB_ENV
 
       - name: Deploy to DEV
-        if: github.event_name == 'push' && github.ref == 'refs/heads/sandbox'
+        if: github.event_name == 'push' && github.ref == 'refs/tags/dev'
         run: |
           echo "DEPLOY=true" >> $GITHUB_ENV
           echo "TARGET=DEV" >> $GITHUB_ENV
@@ -117,9 +118,9 @@ jobs:
         uses: cycjimmy/semantic-release-action@v2
         with:
           dry_run: ${{ needs.config.outputs.target == 'DEV' }}
-          extra_plugins: |
-            @semantic-release/changelog
-            @semantic-release/git
+#          extra_plugins: |
+#            @semantic-release/changelog
+#            @semantic-release/git
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -190,8 +191,8 @@ jobs:
               icon=':mag:'
               ;;
             DEV)
-              code_url="$REPO_BASE_URL/tree/sandbox"
-              compare_url="$REPO_BASE_URL/compare/sandbox"
+              code_url="$REPO_BASE_URL/tree/dev"
+              compare_url="$REPO_BASE_URL/compare/master...dev"
               context_release=''
               icon=':construction:'
               sections=()
