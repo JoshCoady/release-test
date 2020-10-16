@@ -1,3 +1,20 @@
+# [0.5.0](https://github.com/JoshCoady/release-test/compare/v0.4.0...v0.5.0) (2020-10-16)
+
+
+### Bug Fixes
+
+* add correct brnachs ([9e77d9f](https://github.com/JoshCoady/release-test/commit/9e77d9f335e94a86b251c7f7b1596f0ef2911304))
+* correct for new bran h smaes ([a431f03](https://github.com/JoshCoady/release-test/commit/a431f0335ef48e285e80a3e5114c90e133b8937d))
+* correct url extraction ([342f438](https://github.com/JoshCoady/release-test/commit/342f438e7c7c7a66fb628720c2393ca4e7136baa))
+* dry run sandbox mode ([57f67fb](https://github.com/JoshCoady/release-test/commit/57f67fba08d96db4183b5e6ff04c265da02e1339))
+* remove tests ([1297f64](https://github.com/JoshCoady/release-test/commit/1297f64fb6cc5da2e31a3813fba7f1fdcc5f222b))
+* test out sandbox ([f4ff889](https://github.com/JoshCoady/release-test/commit/f4ff8893a2f08491b812c762a7a5001476bdaffc))
+
+
+### Features
+
+* improve slack messaging ([87c44e2](https://github.com/JoshCoady/release-test/commit/87c44e29088e118c8b291d457b66bf84319f0e48))
+
 # [0.4.0](https://github.com/JoshCoady/release-test/compare/v0.3.0...v0.4.0) (2020-10-15)
 
 
