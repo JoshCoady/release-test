@@ -1,3 +1,10 @@
+## [0.6.2](https://github.com/JoshCoady/release-test/compare/v0.6.1...v0.6.2) (2020-10-16)
+
+
+### Bug Fixes
+
+* needed more work ([992f0b8](https://github.com/JoshCoady/release-test/commit/992f0b8eebfb84930ca57234878d56e1fbcc8550))
+
 ## [0.6.1](https://github.com/JoshCoady/release-test/compare/v0.6.0...v0.6.1) (2020-10-16)
 
 
