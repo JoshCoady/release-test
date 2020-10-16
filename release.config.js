@@ -1,23 +1,22 @@
-const master = process.env.GITHUB_REF === 'refs/heads/master'
+const production = process.env.GITHUB_REF === 'refs/heads/production'
 
 const plugins = [
     '@semantic-release/commit-analyzer',
     '@semantic-release/release-notes-generator',
 ]
 
-if (master) {
+if (production) {
     plugins.push(
-        '@semantic-release/changelog',
-        '@semantic-release/git',
+        // '@semantic-release/changelog',
+        // '@semantic-release/git',
         '@semantic-release/github',
     )
 }
 
 module.exports = {
     branches: [
-        'master',
-        {name: 'stable', prerelease: 'test'},
-        {name: 'sandbox', prerelease: 'dev'},
+        'production',
+        {name: 'master', prerelease: 'rc'},
     ],
     plugins,
 }
