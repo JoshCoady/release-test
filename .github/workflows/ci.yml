@@ -152,7 +152,7 @@ jobs:
         run: |
           readarray -t lines <<<"$(echo '${{ steps.slackify_release_notes.outputs.text }}' | sed '/^$/d')"
 
-          echo "COMPARE_URL=$(sed 's/.*<\(.*\)\|.*/\1/' <<< "${lines[0]}")" >> $GITHUB_ENV
+          echo "COMPARE_URL=$(sed 's/.*<\(.*\)\|0.*/\1/' <<< "${lines[0]}")" >> $GITHUB_ENV
 
           channel='#cms-dev'
           message="Deploying to $TARGET"
@@ -213,7 +213,7 @@ jobs:
         with:
           args: '{
             \"channel\": \"U081Z9XTP\",
-            \"text\": \"${{ env.SLACK_CHANNEL }} ${{ env.SUMMARY }} (${{ env.NEW_VERSION }})\",
+            \"text\": \"${{ env.SUMMARY }} (${{ env.NEW_VERSION }})\",
             \"blocks\": [{
               \"type\": \"header\",
               \"text\": {
