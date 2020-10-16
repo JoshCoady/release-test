@@ -99,6 +99,7 @@ jobs:
           echo deploy="${{ needs.config.outputs.deploy }}"
           echo target="${{ needs.config.outputs.target }}"
           echo test="${{ needs.config.outputs.test }}"
+          printenv
 
       - name: Test
         if: needs.config.outputs.test == 'true'
