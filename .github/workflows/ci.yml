@@ -22,7 +22,57 @@ jobs:
       deploy: ${{ env.DEPLOY }}
       target: ${{ env.TARGET }}
       test: ${{ env.TEST }}
+      A_T: ${{ env.A_T }}
+      B_T: ${{ env.B_T }}
+      C_F: ${{ env.C_F }}
+      D_F: ${{ env.D_F }}
+      E_F: ${{ env.E_F }}
+      F_F: ${{ env.F_F }}
+      G_T: ${{ env.G_T }}
+      H_T: ${{ env.H_T }}
     steps:
+      - run: |
+          echo "A_T=true" >> $GITHUB_ENV
+          echo "B_T=1" >> $GITHUB_ENV
+          echo "C_F=false" >> $GITHUB_ENV
+          echo "D_F=0" >> $GITHUB_ENV
+          echo "E_F=" >> $GITHUB_ENV
+          echo "F_F=null" >> $GITHUB_ENV
+          echo "G_T=abc" >> $GITHUB_ENV
+          echo "H_T=123" >> $GITHUB_ENV
+      
+      - name: A_T
+        if: env.A_T
+        run: echo "$A_T"
+      
+      - name: B_T
+        if: env.B_T
+        run: echo "$B_T"
+      
+      - name: C_F
+        if: env.C_F
+        run: echo "$C_F"
+      
+      - name: D_F
+        if: env.D_F
+        run: echo "$D_F"
+      
+      - name: E_F
+        if: env.E_F
+        run: echo "$E_F"
+      
+      - name: F_F
+        if: env.F_F
+        run: echo "$F_F"
+      
+      - name: G_T
+        if: env.G_T
+        run: echo "$G_T"
+      
+      - name: H_T
+        if: env.H_T
+        run: echo "$H_T"
+        
       - name: Skip testing if draft pull request
         if: github.event_name == 'pull_request' && github.event.pull_request.draft
         run: echo "::set-env name=TEST::false"
@@ -110,6 +160,39 @@ jobs:
     runs-on: ubuntu-latest
     needs: [config, build]
     steps:
+      
+      - name: A_T
+        if: needs.config.outputs.A_T
+        run: echo "${{ needs.config.outputs.A_T }}"
+      
+      - name: B_T
+        if: needs.config.outputs.B_T
+        run: echo "${{ needs.config.outputs.B_T }}"
+      
+      - name: C_F
+        if: needs.config.outputs.C_F
+        run: echo "${{ needs.config.outputs.C_F }}"
+      
+      - name: D_F
+        if: needs.config.outputs.D_F
+        run: echo "${{ needs.config.outputs.D_F }}"
+      
+      - name: E_F
+        if: needs.config.outputs.E_F
+        run: echo "${{ needs.config.outputs.E_F }}"
+      
+      - name: F_F
+        if: needs.config.outputs.F_F
+        run: echo "${{ needs.config.outputs.F_F }}"
+      
+      - name: G_T
+        if: needs.config.outputs.G_T
+        run: echo "${{ needs.config.outputs.G_T }}"
+      
+      - name: H_T
+        if: needs.config.outputs.H_T
+        run: echo "${{ needs.config.outputs.H_T }}"
+        
       - name: Checkout
         uses: actions/checkout@v2
 
