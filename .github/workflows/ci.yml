@@ -170,7 +170,6 @@ jobs:
 
           # set default values
           compare_url="$(sed 's:.*<\(.*\)|.*:\1:' <<< "${lines[0]}")"
-          echo "$compare_url"
           code_url="$REPO_BASE_URL/tree/$NEW_VERSION"
           context_release='{
                 \"type\": \"mrkdwn\",
