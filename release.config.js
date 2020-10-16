@@ -17,6 +17,7 @@ module.exports = {
     branches: [
         'production',
         {name: 'master', prerelease: 'rc'},
+        {name: 'dev', prerelease: 'dev'},
     ],
     plugins,
 }
